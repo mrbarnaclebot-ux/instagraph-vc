@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **SEC-01**: Backend validates every inbound URL against private IP ranges (RFC 1918, loopback, link-local), enforces HTTPS-only scheme, and rejects blocked domains before making any outbound HTTP request
 - [ ] **SEC-02**: All Neo4j database queries use parameterised Cypher (driver parameter objects) — zero string interpolation into query strings anywhere in the codebase
-- [ ] **SEC-03**: Every FastAPI protected endpoint validates the Clerk JWT Bearer token — verifying signature via Clerk JWKS, `azp` claim, and expiry — before executing any business logic
+- [x] **SEC-03**: Every FastAPI protected endpoint validates the Clerk JWT Bearer token — verifying signature via Clerk JWKS, `azp` claim, and expiry — before executing any business logic
 - [x] **SEC-04**: FastAPI initialises a single Neo4j driver instance at startup (singleton), reuses it across requests, and closes it gracefully on shutdown — no per-request driver instantiation
 - [ ] **SEC-05**: Next.js middleware sets security headers on every response: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and a Content Security Policy that covers script/style/connect sources
 
@@ -113,7 +113,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-03 | Phase 2 | Pending | |
 | SEC-01 | Phase 1 | Complete | |
 | SEC-02 | Phase 1 | Pending | |
-| SEC-03 | Phase 1 | Pending | |
+| SEC-03 | Phase 1 | Complete | |
 | SEC-04 | Phase 1 | Complete | |
 | SEC-05 | Phase 5 | Pending | |
 | AI-01 | Phase 1 | Pending | |

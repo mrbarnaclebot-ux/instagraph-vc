@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 1 of 5 (Backend Foundation)
-Plan: 2 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-25 — Plan 01-02 complete: SSRF validator + input length validator (TDD)
+Last activity: 2026-02-25 — Plan 01-04 complete: Clerk JWT authentication dependency
 
-Progress: [██░░░░░░░░] 8%
+Progress: [████░░░░░░] 16%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 4
 - Average duration: 2 min
-- Total execution time: 0.07 hours
+- Total execution time: ~0.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-backend-foundation | 2 | 4 min | 2 min |
+| 01-backend-foundation | 4 | ~7 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min), 01-02 (1 min)
+- Last 5 plans: 01-01 (3 min), 01-02 (1 min), 01-03, 01-04 (1 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -53,6 +53,9 @@ Recent decisions affecting current work:
 - [01-02]: ipaddress stdlib used for SSRF BLOCKED_NETWORKS — avoids regex IP range bugs, handles IPv4/IPv6 uniformly
 - [01-02]: is_global catch-all after explicit BLOCKED_NETWORKS loop — defense-in-depth for non-routable addresses
 - [01-02]: Error detail shape {error: str, message: str} established as API contract for 400 responses
+- [01-04]: Manual PyJWT + PyJWKClient chosen over fastapi-clerk-auth (v0.0.9 low-activity) and clerk-backend-api (httpx.Request incompatible with starlette.Request)
+- [01-04]: HTTPBearer(auto_error=False) — missing token returns 401 not FastAPI 422 validation error
+- [01-04]: Catch-all except Exception intentional — JWKS network failures return 401 not 500
 
 ### Pending Todos
 
@@ -60,7 +63,6 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 1]: `fastapi-clerk-auth` is v0.0.9, low-activity library — have manual PyJWT + PyJWKClient fallback pattern ready
 - [Phase 1]: SSRF DNS rebinding has nuanced edge cases (IPv6-mapped addresses, redirect chains) — research-phase recommended before implementing scraper
 - [Phase 3]: Clerk webhook + Supabase RLS policy setup has edge cases — research-phase recommended before implementing user sync
 - [Pre-launch]: Neo4j Aura Free pauses after 3 days inactivity (30-60s cold start) — needs keep-alive cron or Aura Pro upgrade before Phase 5
@@ -69,5 +71,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 01-02-PLAN.md — SSRF validator + input length validator (TDD)
+Stopped at: Completed 01-04-PLAN.md — Clerk JWT authentication dependency
 Resume file: None
