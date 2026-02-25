@@ -23,9 +23,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### AI & Graph Generation
 
-- [ ] **AI-01**: Backend generates a structured knowledge graph from input using GPT-4o with the VC-specific system prompt — extracting Investor, Project, Round, Narrative, and Person entities with their typed relationships (LED, INVESTED_IN, CO_INVESTED, RAISED, FOUNDED, PARTNERS_AT, FOCUSES_ON, CLASSIFIED_AS) and entity properties (AUM, token ticker, chain, raise amounts, stage focus)
+- [x] **AI-01**: Backend generates a structured knowledge graph from input using GPT-4o with the VC-specific system prompt — extracting Investor, Project, Round, Narrative, and Person entities with their typed relationships (LED, INVESTED_IN, CO_INVESTED, RAISED, FOUNDED, PARTNERS_AT, FOCUSES_ON, CLASSIFIED_AS) and entity properties (AUM, token ticker, chain, raise amounts, stage focus)
 - [ ] **AI-02**: Backend scrapes a public HTTPS URL, strips boilerplate HTML via BeautifulSoup, caps content at 32,000 characters before sending to GPT-4o, and caches the raw scraped text in Redis for 1 hour so identical URLs skip re-scraping
-- [ ] **AI-03**: User can paste raw text (funding announcement, article excerpt) directly into the input field as an alternative to URL input — bypasses scraping, goes straight to GPT-4o
+- [x] **AI-03**: User can paste raw text (funding announcement, article excerpt) directly into the input field as an alternative to URL input — bypasses scraping, goes straight to GPT-4o
 - [x] **AI-04**: Backend rejects inputs shorter than 200 characters with a `400` error and user-facing message "Input too short — paste a full funding announcement or article for best results"
 - [ ] **AI-05**: Generated graph nodes and edges are persisted to Neo4j Aura with `created_by: user_id` ownership field and timestamps; anonymous graphs use `created_by: "anonymous"`
 
@@ -116,10 +116,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-03 | Phase 1 | Complete | |
 | SEC-04 | Phase 1 | Complete | |
 | SEC-05 | Phase 5 | Pending | |
-| AI-01 | Phase 1 | Pending | |
+| AI-01 | Phase 1 | Complete | |
 | AI-02 (scraping/extraction) | Phase 1 | Pending | Plan 01-03: scrape URL, strip HTML, cap at 32k chars |
 | AI-02 (Redis caching) | Phase 4 | Pending | With RATE-03: cache scraped text in Redis for 1 hour |
-| AI-03 | Phase 1 | Pending | |
+| AI-03 | Phase 1 | Complete | |
 | AI-04 | Phase 1 | Complete | |
 | AI-05 | Phase 3 | Pending | |
 | FE-01 | Phase 2 | Pending | |
