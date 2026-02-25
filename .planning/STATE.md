@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** Users can instantly generate and explore accurate visual maps of crypto VC relationships from any public funding announcement — without spreadsheets, manual research, or expensive tools.
-**Current focus:** Phase 1 — Backend Foundation
+**Current focus:** Phase 2 — Monorepo Vertical Slice
 
 ## Current Position
 
-Phase: 1 of 5 (Backend Foundation)
-Plan: 5 of 5 in current phase — PHASE COMPLETE
-Status: Phase 1 complete, Phase 2 not started
-Last activity: 2026-02-25 — Plan 01-05 complete: POST /api/generate endpoint with GPT-4o structured outputs
+Phase: 2 of 5 (Monorepo Vertical Slice)
+Plan: 1 of 4 in current phase — Plan 02-01 complete
+Status: Phase 2 in progress
+Last activity: 2026-02-25 — Plan 02-01 complete: Turborepo monorepo foundation with pnpm workspaces, @graphvc/shared-types, Next.js 16 skeleton
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 24%
 
 ## Performance Metrics
 
@@ -28,9 +28,10 @@ Progress: [██░░░░░░░░] 20%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-backend-foundation | 5 | ~10 min | ~2 min |
+| 02-monorepo-vertical-slice | 1 | ~3 min | ~3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min), 01-02 (1 min), 01-03 (~5 min), 01-04 (1 min), 01-05 (3 min)
+- Last 6 plans: 01-01 (3 min), 01-02 (1 min), 01-03 (~5 min), 01-04 (1 min), 01-05 (3 min), 02-01 (3 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -38,6 +39,7 @@ Progress: [██░░░░░░░░] 20%
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 01-backend-foundation | P05 | 3 min | 2 | 6 |
+| 02-monorepo-vertical-slice | P01 | 3 min | 3 | 21 |
 
 ## Accumulated Context
 
@@ -63,6 +65,10 @@ Recent decisions affecting current work:
 - [Phase 01-05]: validate_input_length() applied to text inputs only — URL inputs have their own content yield check in scrape_url() 500-char minimum
 - [Phase 01-05]: OpenAI client as module-level singleton via _get_openai_client() lazy init — one client per worker process, matches PyJWKClient pattern from Plan 04
 - [Phase 01-05]: patch('app.main.GraphDatabase.driver') in test fixture prevents lifespan from attempting real Neo4j connection in CI — required for integration tests without Docker
+- [02-01]: JIT (Just-in-Time) shared-types strategy — no build step, Next.js Turbopack resolves TypeScript source directly; requires transpilePackages in next.config.ts
+- [02-01]: workspace:* protocol required for pnpm internal package links — version strings cause npm registry lookup failure
+- [02-01]: turbo.json uses 'tasks' key not 'pipeline' — pipeline is deprecated in Turborepo v2
+- [02-01]: NEXT_PUBLIC_API_URL env var with localhost:8000 default in next.config.ts — works in dev without .env.local, overridable for production
 
 ### Pending Todos
 
@@ -78,5 +84,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 01-05-PLAN.md — POST /api/generate endpoint with GPT-4o structured outputs (Phase 1 complete)
+Stopped at: Completed 02-01-PLAN.md — Turborepo monorepo foundation with @graphvc/shared-types and Next.js 16 skeleton
 Resume file: None

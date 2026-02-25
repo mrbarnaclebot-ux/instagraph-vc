@@ -11,7 +11,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **INFRA-01**: Developer can scaffold monorepo with `apps/web/` (Next.js 15) and `apps/api/` (FastAPI) sharing a `packages/shared-types/` TypeScript package via Turborepo
 - [x] **INFRA-02**: Developer can run full stack locally with `docker-compose up` starting Neo4j and Redis; frontend and backend connect to local services via `.env.local`
-- [ ] **INFRA-03**: CI/CD pipeline runs `typecheck`, `lint`, and `test` on every PR; deploys frontend to Vercel preview on PR and to production on merge to main; deploys backend to Railway on merge to main
+- [x] **INFRA-03**: CI/CD pipeline runs `typecheck`, `lint`, and `test` on every PR; deploys frontend to Vercel preview on PR and to production on merge to main; deploys backend to Railway on merge to main
 
 ### Security
 
@@ -110,7 +110,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|------|
 | INFRA-01 | Phase 1 | Complete | |
 | INFRA-02 | Phase 1 | Complete | |
-| INFRA-03 | Phase 2 | Pending | |
+| INFRA-03 | Phase 2 | Complete | |
 | SEC-01 | Phase 1 | Complete | |
 | SEC-02 | Phase 1 | Complete | |
 | SEC-03 | Phase 1 | Complete | |
