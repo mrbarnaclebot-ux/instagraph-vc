@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 1 of 5 (Backend Foundation)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-02-25 — Plan 01-04 complete: Clerk JWT authentication dependency
+Plan: 5 of 5 in current phase — PHASE COMPLETE
+Status: Phase 1 complete, Phase 2 not started
+Last activity: 2026-02-25 — Plan 01-05 complete: POST /api/generate endpoint with GPT-4o structured outputs
 
-Progress: [████░░░░░░] 16%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 2 min
 - Total execution time: ~0.1 hours
 
@@ -27,13 +27,17 @@ Progress: [████░░░░░░] 16%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-backend-foundation | 4 | ~7 min | ~2 min |
+| 01-backend-foundation | 5 | ~10 min | ~2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min), 01-02 (1 min), 01-03, 01-04 (1 min)
+- Last 5 plans: 01-01 (3 min), 01-02 (1 min), 01-03 (~5 min), 01-04 (1 min), 01-05 (3 min)
 - Trend: -
 
 *Updated after each plan completion*
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 01-backend-foundation | P05 | 3 min | 2 | 6 |
 
 ## Accumulated Context
 
@@ -56,6 +60,9 @@ Recent decisions affecting current work:
 - [01-04]: Manual PyJWT + PyJWKClient chosen over fastapi-clerk-auth (v0.0.9 low-activity) and clerk-backend-api (httpx.Request incompatible with starlette.Request)
 - [01-04]: HTTPBearer(auto_error=False) — missing token returns 401 not FastAPI 422 validation error
 - [01-04]: Catch-all except Exception intentional — JWKS network failures return 401 not 500
+- [Phase 01-05]: validate_input_length() applied to text inputs only — URL inputs have their own content yield check in scrape_url() 500-char minimum
+- [Phase 01-05]: OpenAI client as module-level singleton via _get_openai_client() lazy init — one client per worker process, matches PyJWKClient pattern from Plan 04
+- [Phase 01-05]: patch('app.main.GraphDatabase.driver') in test fixture prevents lifespan from attempting real Neo4j connection in CI — required for integration tests without Docker
 
 ### Pending Todos
 
@@ -71,5 +78,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 01-04-PLAN.md — Clerk JWT authentication dependency
+Stopped at: Completed 01-05-PLAN.md — POST /api/generate endpoint with GPT-4o structured outputs (Phase 1 complete)
 Resume file: None
