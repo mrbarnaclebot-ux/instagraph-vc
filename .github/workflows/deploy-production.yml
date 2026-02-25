@@ -1,0 +1,25 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-railway:
+    name: Deploy API to Railway
+    runs-on: ubuntu-latest
+    # NOTE: Railway Hobby tier has 30s request timeout.
+    # GPT-4o + Neo4j can take 15-35s — upgrade to Railway Pro if generation times out in production.
+    # See: .planning/STATE.md Blockers/Concerns
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        working-directory: apps/api
+        run: railway up --service=api
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
