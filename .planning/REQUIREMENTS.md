@@ -106,43 +106,46 @@ Explicitly excluded. Documented to prevent scope creep.
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 2 | Pending |
-| SEC-01 | Phase 1 | Pending |
-| SEC-02 | Phase 1 | Pending |
-| SEC-03 | Phase 1 | Pending |
-| SEC-04 | Phase 1 | Pending |
-| SEC-05 | Phase 5 | Pending |
-| AI-01 | Phase 1 | Pending |
-| AI-02 | Phase 1 | Pending |
-| AI-03 | Phase 1 | Pending |
-| AI-04 | Phase 1 | Pending |
-| AI-05 | Phase 3 | Pending |
-| FE-01 | Phase 2 | Pending |
-| FE-02 | Phase 2 | Pending |
-| FE-03 | Phase 3 | Pending |
-| FE-04 | Phase 5 | Pending |
-| FE-05 | Phase 2 | Pending |
-| AUTH-01 | Phase 3 | Pending |
-| AUTH-02 | Phase 3 | Pending |
-| AUTH-03 | Phase 3 | Pending |
-| AUTH-04 | Phase 3 | Pending |
-| RATE-01 | Phase 4 | Pending |
-| RATE-02 | Phase 4 | Pending |
-| RATE-03 | Phase 4 | Pending |
-| EXP-01 | Phase 4 | Pending |
-| EXP-02 | Phase 4 | Pending |
-| OBS-01 | Phase 5 | Pending |
-| OBS-02 | Phase 5 | Pending |
+| Requirement | Phase | Status | Note |
+|-------------|-------|--------|------|
+| INFRA-01 | Phase 1 | Pending | |
+| INFRA-02 | Phase 1 | Pending | |
+| INFRA-03 | Phase 2 | Pending | |
+| SEC-01 | Phase 1 | Pending | |
+| SEC-02 | Phase 1 | Pending | |
+| SEC-03 | Phase 1 | Pending | |
+| SEC-04 | Phase 1 | Pending | |
+| SEC-05 | Phase 5 | Pending | |
+| AI-01 | Phase 1 | Pending | |
+| AI-02 (scraping/extraction) | Phase 1 | Pending | Plan 01-03: scrape URL, strip HTML, cap at 32k chars |
+| AI-02 (Redis caching) | Phase 4 | Pending | With RATE-03: cache scraped text in Redis for 1 hour |
+| AI-03 | Phase 1 | Pending | |
+| AI-04 | Phase 1 | Pending | |
+| AI-05 | Phase 3 | Pending | |
+| FE-01 | Phase 2 | Pending | |
+| FE-02 | Phase 2 | Pending | |
+| FE-03 | Phase 3 | Pending | |
+| FE-04 | Phase 5 | Pending | |
+| FE-05 | Phase 2 | Pending | |
+| AUTH-01 | Phase 3 | Pending | |
+| AUTH-02 | Phase 3 | Pending | |
+| AUTH-03 | Phase 3 | Pending | |
+| AUTH-04 | Phase 3 | Pending | |
+| RATE-01 | Phase 4 | Pending | |
+| RATE-02 | Phase 4 | Pending | |
+| RATE-03 | Phase 4 | Pending | |
+| EXP-01 | Phase 4 | Pending | |
+| EXP-02 | Phase 4 | Pending | |
+| OBS-01 | Phase 5 | Pending | |
+| OBS-02 | Phase 5 | Pending | |
 
 **Coverage:**
 - v1 requirements: 27 total
 - Mapped to phases: 27
 - Unmapped: 0 ✓
+- AI-02 split across Phase 1 (scraping) and Phase 4 (Redis caching) — both sub-requirements tracked
 
 ---
 *Requirements defined: 2026-02-25*
 *Last updated: 2026-02-25 — traceability updated after roadmap creation*
+*2026-02-25 — AI-02 traceability split: scraping/extraction (Phase 1, plan 01-03) vs Redis caching (Phase 4, with RATE-03)*

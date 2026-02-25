@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### Phase 1: Backend Foundation
 **Goal**: A working FastAPI service that accepts text or URL input, scrapes safely, extracts crypto VC entities via GPT-4o, persists graphs to Neo4j, and is free of the SSRF, Cypher injection, and JWT vulnerabilities inherited from the Flask codebase
 **Depends on**: Nothing (first phase)
-**Requirements**: INFRA-01, INFRA-02, SEC-01, SEC-02, SEC-03, SEC-04, AI-01, AI-02, AI-03, AI-04
+**Requirements**: INFRA-01, INFRA-02, SEC-01, SEC-02, SEC-03, SEC-04, AI-01, AI-02 (scraping/extraction only — Redis caching sub-requirement delivered in Phase 4 with RATE-03), AI-03, AI-04
 **Success Criteria** (what must be TRUE):
   1. Developer can run `docker-compose up` and hit `POST /api/generate` with a funding announcement text, receiving a structured JSON graph with Investor, Project, Round, Narrative, and Person nodes and typed relationships
   2. Backend rejects a URL pointing to `127.0.0.1` or `10.0.0.1` with a 400 error — SSRF protection is verifiable via curl
@@ -65,7 +65,7 @@ Plans:
 ### Phase 4: Guardrails + Export
 **Goal**: The application handles load safely — rate limits protect AI costs, Redis caching reduces duplicate scrapes, and users can export graphs as JSON or PNG for use in reports
 **Depends on**: Phase 3
-**Requirements**: RATE-01, RATE-02, RATE-03, EXP-01, EXP-02
+**Requirements**: RATE-01, RATE-02, RATE-03, AI-02 (Redis caching sub-requirement — caches raw scraped text in Redis for 1 hour so identical URLs skip re-scraping), EXP-01, EXP-02
 **Success Criteria** (what must be TRUE):
   1. Anonymous user who has already generated one graph today receives a 429 response with a `Retry-After` header; the UI shows a toast with the retry time rather than a blank error
   2. Free authenticated user who has generated 10 graphs today sees the same 429 + toast; the daily count resets at midnight UTC
@@ -102,3 +102,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 *Roadmap created: 2026-02-25*
 *Coverage: 27/27 v1 requirements mapped*
 *Phase 1 planned: 2026-02-25 — 5 plans across 3 waves*
+*AI-02 note: scraping/extraction sub-requirement in Phase 1 (plan 01-03); Redis caching sub-requirement in Phase 4 (with RATE-03)*
