@@ -48,7 +48,15 @@ Plans:
   2. User pastes a funding announcement URL into the input field, submits it, and sees an animated progress bar with "Extracting entities..." followed by an interactive Cytoscape graph where Investor nodes are indigo ellipses, Project nodes are emerald rectangles, Round nodes are amber diamonds, Narrative nodes are violet hexagons, and Person nodes are pink ellipses
   3. User clicks any node in the graph and a right-side detail panel opens showing the node label, entity type, and all extracted properties; clicking the canvas background closes the panel
   4. User submits a URL that fails to scrape and sees a toast "Couldn't read that URL — try pasting the text instead"; submitting text that produces no VC entities shows a toast "No VC relationships found"
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Turborepo monorepo scaffold: pnpm workspace, turbo.json, shared-types package, Next.js 15 skeleton with API rewrites
+- [ ] 02-02-PLAN.md — Cytoscape canvas (fcose, VC entity styling, neighborhood highlight) + Detail panel (key-value table, connected node nav, bottom sheet)
+- [ ] 02-03-PLAN.md — API client (generateGraph, GraphAPIError), LoadingSteps (cycling labels, cancel), InputCard (URL/Text tabs, hero layout, collapse)
+- [ ] 02-04-PLAN.md — App page wiring: state machine, dynamic GraphCanvas import, AbortController cancel, FE-05 error toasts
+- [ ] 02-05-PLAN.md — GitHub Actions CI/CD: ci.yml (typecheck+lint+pytest), deploy-preview.yml (Vercel), deploy-production.yml (Railway)
+- [ ] 02-06-PLAN.md — Human verification checkpoint: full input-to-graph flow, node interaction, error toasts, CI files
 
 ### Phase 3: Auth + Persistence
 **Goal**: The application is a real multi-user product — users sign up, their graphs are saved under their identity, history is browsable, and anonymous users get one free trial before being prompted to sign up
