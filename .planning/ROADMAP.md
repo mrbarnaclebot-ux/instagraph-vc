@@ -34,9 +34,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Project scaffold: uv + FastAPI skeleton + Neo4j lifespan singleton + docker-compose
-- [ ] 01-02-PLAN.md — TDD: SSRF URL validator and input length validator (RED-GREEN-REFACTOR)
-- [ ] 01-03-PLAN.md — BeautifulSoup scraper (SSRF-aware) + parameterized Neo4j repository
-- [ ] 01-04-PLAN.md — Clerk JWT auth dependency via PyJWT + PyJWKClient
+- [x] 01-02-PLAN.md — TDD: SSRF URL validator and input length validator (RED-GREEN-REFACTOR)
+- [x] 01-03-PLAN.md — BeautifulSoup scraper (SSRF-aware) + parameterized Neo4j repository
+- [x] 01-04-PLAN.md — Clerk JWT auth dependency via PyJWT + PyJWKClient
 - [ ] 01-05-PLAN.md — POST /api/generate endpoint: wires scraper + GPT-4o + Neo4j + auth
 
 ### Phase 2: Monorepo + Vertical Slice
@@ -92,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Foundation | 3/5 | In Progress|  |
+| 1. Backend Foundation | 4/5 | In Progress|  |
 | 2. Monorepo + Vertical Slice | 0/TBD | Not started | - |
 | 3. Auth + Persistence | 0/TBD | Not started | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
