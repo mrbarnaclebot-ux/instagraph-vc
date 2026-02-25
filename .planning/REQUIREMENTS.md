@@ -9,8 +9,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Developer can scaffold monorepo with `apps/web/` (Next.js 15) and `apps/api/` (FastAPI) sharing a `packages/shared-types/` TypeScript package via Turborepo
-- [ ] **INFRA-02**: Developer can run full stack locally with `docker-compose up` starting Neo4j and Redis; frontend and backend connect to local services via `.env.local`
+- [x] **INFRA-01**: Developer can scaffold monorepo with `apps/web/` (Next.js 15) and `apps/api/` (FastAPI) sharing a `packages/shared-types/` TypeScript package via Turborepo
+- [x] **INFRA-02**: Developer can run full stack locally with `docker-compose up` starting Neo4j and Redis; frontend and backend connect to local services via `.env.local`
 - [ ] **INFRA-03**: CI/CD pipeline runs `typecheck`, `lint`, and `test` on every PR; deploys frontend to Vercel preview on PR and to production on merge to main; deploys backend to Railway on merge to main
 
 ### Security
@@ -18,7 +18,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SEC-01**: Backend validates every inbound URL against private IP ranges (RFC 1918, loopback, link-local), enforces HTTPS-only scheme, and rejects blocked domains before making any outbound HTTP request
 - [ ] **SEC-02**: All Neo4j database queries use parameterised Cypher (driver parameter objects) — zero string interpolation into query strings anywhere in the codebase
 - [ ] **SEC-03**: Every FastAPI protected endpoint validates the Clerk JWT Bearer token — verifying signature via Clerk JWKS, `azp` claim, and expiry — before executing any business logic
-- [ ] **SEC-04**: FastAPI initialises a single Neo4j driver instance at startup (singleton), reuses it across requests, and closes it gracefully on shutdown — no per-request driver instantiation
+- [x] **SEC-04**: FastAPI initialises a single Neo4j driver instance at startup (singleton), reuses it across requests, and closes it gracefully on shutdown — no per-request driver instantiation
 - [ ] **SEC-05**: Next.js middleware sets security headers on every response: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and a Content Security Policy that covers script/style/connect sources
 
 ### AI & Graph Generation
@@ -108,13 +108,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status | Note |
 |-------------|-------|--------|------|
-| INFRA-01 | Phase 1 | Pending | |
-| INFRA-02 | Phase 1 | Pending | |
+| INFRA-01 | Phase 1 | Complete | |
+| INFRA-02 | Phase 1 | Complete | |
 | INFRA-03 | Phase 2 | Pending | |
 | SEC-01 | Phase 1 | Pending | |
 | SEC-02 | Phase 1 | Pending | |
 | SEC-03 | Phase 1 | Pending | |
-| SEC-04 | Phase 1 | Pending | |
+| SEC-04 | Phase 1 | Complete | |
 | SEC-05 | Phase 5 | Pending | |
 | AI-01 | Phase 1 | Pending | |
 | AI-02 (scraping/extraction) | Phase 1 | Pending | Plan 01-03: scrape URL, strip HTML, cap at 32k chars |
