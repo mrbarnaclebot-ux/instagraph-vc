@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 1 of 5 (Backend Foundation)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-25 — Plan 01-01 complete: FastAPI scaffold + docker-compose
+Last activity: 2026-02-25 — Plan 01-02 complete: SSRF validator + input length validator (TDD)
 
-Progress: [█░░░░░░░░░] 4%
+Progress: [██░░░░░░░░] 8%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 3 min
-- Total execution time: 0.05 hours
+- Total plans completed: 2
+- Average duration: 2 min
+- Total execution time: 0.07 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-backend-foundation | 1 | 3 min | 3 min |
+| 01-backend-foundation | 2 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min)
+- Last 5 plans: 01-01 (3 min), 01-02 (1 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -50,6 +50,9 @@ Recent decisions affecting current work:
 - [01-01]: uv --no-workspace required — repo root pyproject.toml (InstaGraph fork) lacks [project] table
 - [01-01]: FastAPI lifespan asynccontextmanager established as singleton pattern for all driver connections
 - [01-01]: session_id index created at startup (idempotent) for per-graph query isolation in Plan 02+
+- [01-02]: ipaddress stdlib used for SSRF BLOCKED_NETWORKS — avoids regex IP range bugs, handles IPv4/IPv6 uniformly
+- [01-02]: is_global catch-all after explicit BLOCKED_NETWORKS loop — defense-in-depth for non-routable addresses
+- [01-02]: Error detail shape {error: str, message: str} established as API contract for 400 responses
 
 ### Pending Todos
 
@@ -66,5 +69,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 01-01-PLAN.md — FastAPI scaffold + docker-compose
+Stopped at: Completed 01-02-PLAN.md — SSRF validator + input length validator (TDD)
 Resume file: None
