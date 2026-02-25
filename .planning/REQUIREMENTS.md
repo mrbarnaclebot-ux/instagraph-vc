@@ -112,12 +112,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-02 | Phase 1 | Complete | |
 | INFRA-03 | Phase 2 | Pending | |
 | SEC-01 | Phase 1 | Complete | |
-| SEC-02 | Phase 1 | Pending | |
+| SEC-02 | Phase 1 | Complete | |
 | SEC-03 | Phase 1 | Complete | |
 | SEC-04 | Phase 1 | Complete | |
 | SEC-05 | Phase 5 | Pending | |
 | AI-01 | Phase 1 | Complete | |
-| AI-02 (scraping/extraction) | Phase 1 | Pending | Plan 01-03: scrape URL, strip HTML, cap at 32k chars |
+| AI-02 (scraping/extraction) | Phase 1 | Complete | Plan 01-03: scrape URL, strip HTML, cap at 32k chars |
 | AI-02 (Redis caching) | Phase 4 | Pending | With RATE-03: cache scraped text in Redis for 1 hour |
 | AI-03 | Phase 1 | Complete | |
 | AI-04 | Phase 1 | Complete | |
