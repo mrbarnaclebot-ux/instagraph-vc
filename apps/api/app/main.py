@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from neo4j import GraphDatabase
 from app.config import settings
+from app.generate.router import router as generate_router
 
 
 @asynccontextmanager
@@ -28,6 +29,8 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+app.include_router(generate_router)
 
 
 @app.get("/health")

@@ -41,10 +41,6 @@ def run_generate_pipeline(
     """
     start_ms = int(time.time() * 1000)
 
-    # AI-04: Reject inputs shorter than 200 characters
-    # validate_input_length raises HTTPException(400) with exact required message
-    validate_input_length(raw_input)
-
     # AI-03: Source type detection
     # URL inputs: starts with "https://" (HTTP is blocked by SSRF validator anyway)
     # Text inputs: everything else
@@ -52,9 +48,15 @@ def run_generate_pipeline(
 
     if raw_input.strip().startswith("https://"):
         source_type = "url"
+        # For URL inputs, length check is skipped — the URL itself is short but the
+        # scraped content will be validated by scrape_url() (>500 char minimum yield).
         content = scrape_url(raw_input.strip())
     else:
         source_type = "text"
+        # AI-04: Reject text inputs shorter than 200 characters.
+        # validate_input_length raises HTTPException(400) with exact required message.
+        # Applied to text inputs only — URL inputs have their own content yield check.
+        validate_input_length(raw_input)
         content = raw_input[:32_000]  # cap at 32k even for direct text (AI-02)
 
     # AI-01: GPT-4o structured extraction via native structured outputs
