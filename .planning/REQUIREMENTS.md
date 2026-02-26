@@ -34,7 +34,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **FE-01**: Authenticated user sees a dashboard at `/app` with a Cytoscape.js graph canvas using VC entity styling: Investor=indigo ellipse, Project=emerald rectangle, Round=amber diamond, Narrative=violet hexagon, Person=pink ellipse; edge styles differ by relationship type; canvas uses performance-optimised Cytoscape config (haystack/bezier edges, `data()` style mappers, `pixelRatio: 1`, `hideEdgesOnViewport: true`)
 - [x] **FE-02**: User can click any node in the graph to open a right-side detail panel showing the node's label, entity type, and all extracted properties (e.g., AUM, stage focus, token ticker); clicking the canvas background closes the panel
 - [ ] **FE-03**: Authenticated user can view their graph history at `/app/history` showing a list of past graphs (title, node count, edge count, source URL, date); can search by title, click to reload a graph, and delete a graph they own
-- [ ] **FE-04**: Landing page at `/` has: hero section with input box (anonymous try), embedded animated demo graph showing a sample VC relationship, "How it works" 3-step explainer, use case cards (Analyst / Founder / Journalist), and a footer
+- [x] **FE-04**: Landing page at `/` has: hero section with input box (anonymous try), embedded animated demo graph showing a sample VC relationship, "How it works" 3-step explainer, use case cards (Analyst / Founder / Journalist), and a footer
 - [x] **FE-05**: User sees appropriate UI for each state: animated progress bar + "Extracting entities..." during generation; toast "Couldn't read that URL — try pasting the text instead" on scrape failure; toast "No VC relationships found" on empty graph; toast with retry button on API error
 
 ### Authentication & Users
@@ -57,7 +57,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Observability
 
-- [ ] **OBS-01**: Sentry is configured on both the Next.js frontend and FastAPI backend; uncaught exceptions and API errors (5xx) are captured with user context; alert fires when error rate exceeds 1% in a 5-minute window
+- [x] **OBS-01**: Sentry is configured on both the Next.js frontend and FastAPI backend; uncaught exceptions and API errors (5xx) are captured with user context; alert fires when error rate exceeds 1% in a 5-minute window
 - [ ] **OBS-02**: PostHog is configured on the frontend and tracks `graph_generated` (with node_count, edge_count, source_type), `graph_exported` (with format), and `graph_history_viewed` events
 - [ ] **OBS-03**: (Covered by SEC-05 — security headers include CSP)
 
@@ -125,7 +125,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FE-01 | Phase 2 | Complete | |
 | FE-02 | Phase 2 | Complete | |
 | FE-03 | Phase 3 | Pending | |
-| FE-04 | Phase 5 | Pending | |
+| FE-04 | Phase 5 | Complete | |
 | FE-05 | Phase 2 | Complete | |
 | AUTH-01 | Phase 3 | Pending | |
 | AUTH-02 | Phase 3 | Pending | |
@@ -136,7 +136,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RATE-03 | Phase 4 | Pending | |
 | EXP-01 | Phase 4 | Pending | |
 | EXP-02 | Phase 4 | Pending | |
-| OBS-01 | Phase 5 | Pending | |
+| OBS-01 | Phase 5 | Complete | |
 | OBS-02 | Phase 5 | Pending | |
 
 **Coverage:**
