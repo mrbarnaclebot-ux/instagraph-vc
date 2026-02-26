@@ -1,6 +1,6 @@
 import type Cytoscape from 'cytoscape'
 
-export const cytoscapeStylesheet: Cytoscape.Stylesheet[] = [
+export const cytoscapeStylesheet: Cytoscape.StylesheetStyle[] = [
   // Base node style
   {
     selector: 'node',
