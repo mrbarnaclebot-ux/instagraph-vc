@@ -96,6 +96,10 @@ Recent decisions affecting current work:
    - Deep-dive fork vs upstream, fix gaps/bugs; then redesign frontend and graph with frontend-design skill
    - File: `.planning/todos/pending/2026-02-26-research-instagraph-fork-gaps-and-improve-ui-and-graph-visuals.md`
 
+2. **Add 404 error page and complete missing pages sign up login privacy** (ui)
+   - Create custom not-found.tsx, styled Clerk auth pages, and privacy policy page
+   - File: `.planning/todos/pending/2026-02-26-add-404-error-page-and-complete-missing-pages-sign-up-login-privacy.md`
+
 ### Blockers/Concerns
 
 - [Phase 1]: SSRF DNS rebinding has nuanced edge cases (IPv6-mapped addresses, redirect chains) — research-phase recommended before implementing scraper
