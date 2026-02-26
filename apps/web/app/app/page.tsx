@@ -7,6 +7,7 @@ import InputCard from '@/components/input/InputCard'
 import LoadingSteps from '@/components/input/LoadingSteps'
 import DetailPanel from '@/components/graph/DetailPanel'
 import { generateGraph, GraphAPIError } from '@/lib/api'
+import { captureGraphGenerated } from '@/lib/analytics'
 import type { VCGraph } from '@graphvc/shared-types'
 
 // CRITICAL: ssr:false required — react-cytoscapejs accesses window at module load time
@@ -56,6 +57,11 @@ export default function AppPage() {
 
       setGraph(data.graph)
       setStatus('success')
+      captureGraphGenerated(
+        data.graph.nodes.length,
+        data.graph.edges.length,
+        input.trim().startsWith('https://') || input.trim().startsWith('http://') ? 'url' : 'text'
+      )
     } catch (err) {
       // User cancelled — reset quietly, no toast
       if (err instanceof DOMException && err.name === 'AbortError') {
