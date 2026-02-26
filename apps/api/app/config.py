@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     clerk_frontend_api: str = ""
     # Dev-only: skip Clerk JWT validation. Never set in production.
     dev_skip_auth: bool = False
+    # Observability (Phase 5)
+    sentry_dsn: str = ""
+    environment: str = "development"
 
     model_config = {"env_file": ".env"}
 
