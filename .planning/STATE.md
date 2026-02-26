@@ -44,6 +44,7 @@ Progress: [██████████] 100%
 | 02-monorepo-vertical-slice | P04 | 2 min | 1 | 3 |
 | 05-landing-page-observability | P04 | 5 min | 2 | 5 |
 | 05-landing-page-observability | P05 | 1 min | 1 | 1 |
+| Phase 05-landing-page-observability P06 | 5 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase 05-04]: LandingFooter uses new Date().getFullYear() — dynamic copyright year, no hardcoded value
 - [Phase 05-landing-page-observability]: Truthiness check for PostHog key guard (not !== undefined) — also filters empty string which posthog rejects the same way
 - [Phase 05-landing-page-observability]: TypeScript non-null assertion (!) removed from posthog.init() — string is narrowed to defined value inside if block, making ! redundant
+- [Phase 05-landing-page-observability]: Sign up to save caption placed as right-column footer beneath graph — graph context makes prompt more meaningful
+- [Phase 05-landing-page-observability]: Landing page GraphCanvas uses same dynamic() ssr:false pattern as apps/web/app/app/page.tsx
+- [Phase 05-landing-page-observability]: onNodeClick={() => undefined} passed to GraphCanvas on landing page — no detail panel needed, no-op is correct and type-safe
 
 ### Pending Todos
 

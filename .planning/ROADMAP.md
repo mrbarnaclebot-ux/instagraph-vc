@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Monorepo + Vertical Slice** - Turborepo scaffold, Next.js BFF, and working Cytoscape UI proving the full input-to-graph flow (completed 2026-02-26)
 - [ ] **Phase 3: Auth + Persistence** - Clerk authentication, per-user graph ownership, Supabase metadata, and graph history
 - [ ] **Phase 4: Guardrails + Export** - Rate limiting with user feedback, Redis URL caching, JSON and PNG export
-- [ ] **Phase 5: Landing Page + Observability** - Public marketing surface, security headers, Sentry error tracking, and PostHog analytics (gap closure in progress)
+- [x] **Phase 5: Landing Page + Observability** - Public marketing surface, security headers, Sentry error tracking, and PostHog analytics (gap closure in progress) (completed 2026-02-26)
 
 ## Phase Details
 
@@ -112,7 +112,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
 | 3. Auth + Persistence | 0/TBD | Not started | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
-| 5. Landing Page + Observability | 5/6 | In Progress|  |
+| 5. Landing Page + Observability | 6/6 | Complete   | 2026-02-26 |
 
 ---
 *Roadmap created: 2026-02-25*
