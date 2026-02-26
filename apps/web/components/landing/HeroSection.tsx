@@ -1,12 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
+import type { VCGraph } from '@graphvc/shared-types'
 import DemoGraph from './DemoGraph'
+
+const GraphCanvas = dynamic(() => import('@/components/graph/GraphCanvas'), { ssr: false })
 
 export default function HeroSection() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState<{ nodes: number; edges: number } | null>(null)
+  const [graph, setGraph] = useState<VCGraph | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleTry(e: React.FormEvent) {
@@ -14,7 +18,7 @@ export default function HeroSection() {
     if (!input.trim() || isLoading) return
     setIsLoading(true)
     setError(null)
-    setResult(null)
+    setGraph(null)
 
     try {
       const res = await fetch('/api/generate', {
@@ -28,13 +32,12 @@ export default function HeroSection() {
         return
       }
       const data = await res.json()
-      const nodeCount = data.graph?.nodes?.length ?? 0
-      const edgeCount = data.graph?.edges?.length ?? 0
-      if (nodeCount === 0) {
+      const vcGraph: VCGraph = data.graph
+      if (!vcGraph?.nodes?.length) {
         setError('No VC relationships found. Try a more specific funding announcement.')
         return
       }
-      setResult({ nodes: nodeCount, edges: edgeCount })
+      setGraph(vcGraph)
     } catch {
       setError('Request failed. Please try again.')
     } finally {
@@ -70,33 +73,67 @@ export default function HeroSection() {
               disabled={!input.trim() || isLoading}
               className="w-full rounded-lg bg-indigo-600 text-white py-3 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isLoading ? 'Extracting...' : 'Try it free →'}
+              {isLoading ? 'Extracting...' : 'Try it free \u2192'}
             </button>
           </form>
 
-          {/* Inline result / error
-              NOTE: Locked decision requires a sign-up modal in-place after trial (same Phase 3 AUTH-02 modal).
-              Modal is not yet available — AUTH-02 is a Phase 3 deliverable.
-              Phase 5 interim state: inline "Sign up to save" text prompt (no redirect, no modal).
-              Phase 3 will replace this block with a modal trigger. */}
-          {result && (
-            <div className="rounded-lg border border-emerald-800 bg-emerald-950/50 p-4">
-              <p className="text-emerald-400 text-sm font-medium">
-                Graph generated — {result.nodes} nodes, {result.edges} relationships
-              </p>
-              <p className="text-gray-400 text-xs mt-1">
-                <a href="/sign-in" className="text-indigo-400 hover:text-indigo-300 underline">Sign up free</a> to save, search, and revisit your graphs.
-              </p>
-            </div>
-          )}
           {error && (
             <p className="text-red-400 text-sm">{error}</p>
           )}
         </div>
 
-        {/* Right — demo graph */}
-        <div className="hidden lg:block h-[500px] rounded-xl overflow-hidden border border-gray-800 bg-gray-900">
-          <DemoGraph className="w-full h-full" />
+        {/* Right — demo graph / live result graph */}
+        <div className="hidden lg:flex lg:flex-col gap-3">
+          <div
+            className={[
+              'h-[500px] rounded-xl overflow-hidden border bg-gray-900 transition-all duration-500',
+              graph
+                ? 'border-indigo-700/60 shadow-lg shadow-indigo-950/40'
+                : 'border-gray-800',
+            ].join(' ')}
+          >
+            {isLoading && !graph && (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-gray-500">
+                <svg
+                  className="animate-spin h-6 w-6 text-indigo-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                <span className="text-sm">Extracting relationships&hellip;</span>
+              </div>
+            )}
+            {!isLoading && graph && (
+              <GraphCanvas
+                graph={graph}
+                selectedNodeId={null}
+                onNodeClick={() => undefined}
+              />
+            )}
+            {!isLoading && !graph && (
+              <DemoGraph className="w-full h-full" />
+            )}
+          </div>
+
+          {graph && (
+            <p className="text-gray-400 text-xs text-center leading-relaxed">
+              <span className="text-gray-300 font-medium">
+                {graph.nodes.length} nodes &middot; {graph.edges.length} relationships
+              </span>
+              {' — '}
+              <a
+                href="/sign-in"
+                className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors"
+              >
+                Sign up free
+              </a>
+              {' '}to save and revisit.
+            </p>
+          )}
         </div>
       </div>
     </section>
