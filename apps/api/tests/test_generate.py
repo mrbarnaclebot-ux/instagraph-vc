@@ -103,11 +103,14 @@ class TestGenerateEndpoint:
         assert "processing_ms" in data["meta"]
 
     def test_generate_rejects_missing_auth(self, app_with_mocks):
-        with TestClient(app_with_mocks) as client:
-            response = client.post(
-                "/api/generate",
-                json={"input": "Some funding announcement text. " * 10},
-            )
+        # Ensure dev bypass is off so missing token is rejected (bypass is dev-only)
+        with patch("app.auth.clerk.settings") as mock_settings:
+            mock_settings.dev_skip_auth = False
+            with TestClient(app_with_mocks) as client:
+                response = client.post(
+                    "/api/generate",
+                    json={"input": "Some funding announcement text. " * 10},
+                )
         assert response.status_code == 401
         assert response.json()["detail"]["error"] == "unauthorized"
 

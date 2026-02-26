@@ -1,5 +1,5 @@
-from typing import Any, Literal
-from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pydantic import BaseModel, ConfigDict, Field
 
 # Entity and relationship types from REQUIREMENTS.md AI-01
 EntityType = Literal["Investor", "Project", "Round", "Narrative", "Person"]
@@ -16,14 +16,40 @@ RelationshipType = Literal[
 ]
 
 
+class NodeProperties(BaseModel):
+    """
+    Typed entity properties — covers all entity types with Optional fields.
+    additionalProperties: false is required by OpenAI structured outputs.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+    # Investor
+    aum: Optional[str] = None
+    stage_focus: Optional[str] = None
+    chain_focus: Optional[str] = None
+    # Project
+    token_ticker: Optional[str] = None
+    chain: Optional[str] = None
+    category: Optional[str] = None
+    # Round
+    amount_usd: Optional[str] = None
+    stage: Optional[str] = None
+    date: Optional[str] = None
+    # Person
+    title: Optional[str] = None
+    firm: Optional[str] = None
+    # Narrative
+    description: Optional[str] = None
+
+
 class GraphNode(BaseModel):
     id: str = Field(
         description="Unique slug identifier derived from entity name, e.g., 'paradigm-capital'"
     )
     label: str = Field(description="Display name, e.g., 'Paradigm Capital'")
     type: EntityType
-    properties: dict[str, Any] = Field(
-        default_factory=dict,
+    properties: NodeProperties = Field(
+        default_factory=NodeProperties,
         description=(
             "Entity-specific properties. "
             "Investor: aum, stage_focus, chain_focus. "

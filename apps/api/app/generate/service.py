@@ -83,7 +83,8 @@ def run_generate_pipeline(
     token_count: int = response.usage.total_tokens
 
     # Serialize to dicts for Neo4j persistence and response
-    nodes = [node.model_dump() for node in parsed.nodes]
+    # exclude_none strips unpopulated NodeProperties fields (keeps Neo4j/frontend clean)
+    nodes = [node.model_dump(exclude_none=True) for node in parsed.nodes]
     edges = [edge.model_dump() for edge in parsed.edges]
 
     # Persist to Neo4j — parameterized Cypher only (SEC-02, from Plan 03)

@@ -1,3 +1,4 @@
+import json
 from typing import Any
 from neo4j import Driver
 
@@ -18,6 +19,12 @@ def persist_graph(
     Each node dict: {id, label, type, properties}
     Each edge dict: {source, target, relationship}
     """
+    # Neo4j cannot store nested maps as properties — serialize to JSON string
+    serialized_nodes = [
+        {**n, "properties": json.dumps(n.get("properties") or {})}
+        for n in nodes
+    ]
+
     with driver.session() as session:
         # Persist nodes — parameterized UNWIND batch insert
         # NOTE: Entity label is constant (not user-supplied) so dynamic label is safe here.
@@ -34,7 +41,7 @@ def persist_graph(
                 session_id: $session_id
             })
             """,
-            nodes=nodes,
+            nodes=serialized_nodes,
             session_id=session_id,
         )
 
@@ -72,7 +79,11 @@ def get_graph_by_session(driver: Driver, session_id: str) -> dict[str, list]:
             """,
             session_id=session_id,
         )
-        nodes = [dict(record) for record in node_result]
+        raw_nodes = [dict(record) for record in node_result]
+        nodes = [
+            {**n, "properties": json.loads(n["properties"]) if isinstance(n.get("properties"), str) else (n.get("properties") or {})}
+            for n in raw_nodes
+        ]
 
         # Fetch edges
         edge_result = session.run(
