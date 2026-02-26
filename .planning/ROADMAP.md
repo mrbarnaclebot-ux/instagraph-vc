@@ -13,7 +13,7 @@ GraphVC is built in five phases that follow the natural dependency chain of the 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Backend Foundation** - FastAPI service with VC-specific AI pipeline, SSRF-hardened scraper, and all security primitives in place (completed 2026-02-25)
-- [ ] **Phase 2: Monorepo + Vertical Slice** - Turborepo scaffold, Next.js BFF, and working Cytoscape UI proving the full input-to-graph flow
+- [x] **Phase 2: Monorepo + Vertical Slice** - Turborepo scaffold, Next.js BFF, and working Cytoscape UI proving the full input-to-graph flow (completed 2026-02-26)
 - [ ] **Phase 3: Auth + Persistence** - Clerk authentication, per-user graph ownership, Supabase metadata, and graph history
 - [ ] **Phase 4: Guardrails + Export** - Rate limiting with user feedback, Redis URL caching, JSON and PNG export
 - [ ] **Phase 5: Landing Page + Observability** - Public marketing surface, security headers, Sentry error tracking, and PostHog analytics
@@ -51,12 +51,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Turborepo monorepo scaffold: pnpm workspace, turbo.json, shared-types package, Next.js 15 skeleton with API rewrites
-- [ ] 02-02-PLAN.md — Cytoscape canvas (fcose, VC entity styling, neighborhood highlight) + Detail panel (key-value table, connected node nav, bottom sheet)
-- [ ] 02-03-PLAN.md — API client (generateGraph, GraphAPIError), LoadingSteps (cycling labels, cancel), InputCard (URL/Text tabs, hero layout, collapse)
-- [ ] 02-04-PLAN.md — App page wiring: state machine, dynamic GraphCanvas import, AbortController cancel, FE-05 error toasts
-- [ ] 02-05-PLAN.md — GitHub Actions CI/CD: ci.yml (typecheck+lint+pytest), deploy-preview.yml (Vercel), deploy-production.yml (Railway)
-- [ ] 02-06-PLAN.md — Human verification checkpoint: full input-to-graph flow, node interaction, error toasts, CI files
+- [x] 02-01-PLAN.md — Turborepo monorepo scaffold: pnpm workspace, turbo.json, shared-types package, Next.js 15 skeleton with API rewrites
+- [x] 02-02-PLAN.md — Cytoscape canvas (fcose, VC entity styling, neighborhood highlight) + Detail panel (key-value table, connected node nav, bottom sheet)
+- [x] 02-03-PLAN.md — API client (generateGraph, GraphAPIError), LoadingSteps (cycling labels, cancel), InputCard (URL/Text tabs, hero layout, collapse)
+- [x] 02-04-PLAN.md — App page wiring: state machine, dynamic GraphCanvas import, AbortController cancel, FE-05 error toasts
+- [x] 02-05-PLAN.md — GitHub Actions CI/CD: ci.yml (typecheck+lint+pytest), deploy-preview.yml (Vercel), deploy-production.yml (Railway)
+- [x] 02-06-PLAN.md — Human verification checkpoint: full input-to-graph flow, node interaction, error toasts, CI files
 
 ### Phase 3: Auth + Persistence
 **Goal**: The application is a real multi-user product — users sign up, their graphs are saved under their identity, history is browsable, and anonymous users get one free trial before being prompted to sign up
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 5/5 | Complete    | 2026-02-25 |
-| 2. Monorepo + Vertical Slice | 5/6 | In Progress|  |
+| 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
 | 3. Auth + Persistence | 0/TBD | Not started | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
 | 5. Landing Page + Observability | 0/TBD | Not started | - |
