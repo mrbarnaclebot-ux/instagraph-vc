@@ -14,8 +14,11 @@ export class GraphAPIError extends Error {
     return (
       this.status === 400 &&
       (this.detail.error?.includes('scrape') ||
+        this.detail.error?.includes('invalid_url') ||
         this.detail.message?.toLowerCase().includes('scrape') ||
-        this.detail.message?.toLowerCase().includes("couldn't read"))
+        this.detail.message?.toLowerCase().includes("couldn't read") ||
+        this.detail.message?.toLowerCase().includes('hostname') ||
+        this.detail.message?.toLowerCase().includes('resolve'))
     )
   }
 }
