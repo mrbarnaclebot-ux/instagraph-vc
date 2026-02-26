@@ -92,7 +92,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+1. **Research instagraph fork gaps and improve UI and graph visuals** (ui)
+   - Deep-dive fork vs upstream, fix gaps/bugs; then redesign frontend and graph with frontend-design skill
+   - File: `.planning/todos/pending/2026-02-26-research-instagraph-fork-gaps-and-improve-ui-and-graph-visuals.md`
 
 ### Blockers/Concerns
 
