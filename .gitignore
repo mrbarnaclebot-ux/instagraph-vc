@@ -173,3 +173,10 @@ cython_debug/
 
 # emacs
 *~
+
+# node_modules (root-level, in case any tool installs here)
+node_modules/
+
+# local tool / session files
+.playwright-mcp/
+my-spec.md
