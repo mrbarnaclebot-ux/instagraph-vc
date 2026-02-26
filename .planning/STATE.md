@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** Users can instantly generate and explore accurate visual maps of crypto VC relationships from any public funding announcement — without spreadsheets, manual research, or expensive tools.
-**Current focus:** Phase 3 — Auth + Persistence
+**Current focus:** Phase 5 — Landing Page + Observability
 
 ## Current Position
 
-Phase: 3 of 5 (Auth + Persistence)
-Plan: 0 of TBD in current phase — Phase 3 not yet planned
-Status: Phase 2 complete — Phase 3 ready to plan
-Last activity: 2026-02-26 — Phase 2 complete: all 6/6 plans done, human verification passed, VERIFICATION.md status: passed
+Phase: 5 of 5 (Landing Page + Observability)
+Plan: 4 of 5 in current phase — awaiting human verification checkpoint
+Status: Phase 5 Plan 04 tasks complete — checkpoint:human-verify in progress
+Last activity: 2026-02-26 — Phase 5 Plan 04 complete: HowItWorks, PersonaCards, CtaBand, LandingFooter, and page.tsx assembled; awaiting human verification
 
-Progress: [████████░░] 40%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ Progress: [████████░░] 40%
 | 02-monorepo-vertical-slice | P01 | 3 min | 3 | 21 |
 | 02-monorepo-vertical-slice | P05 | 3 min | 2 | 3 |
 | 02-monorepo-vertical-slice | P04 | 2 min | 1 | 3 |
+| 05-landing-page-observability | P04 | 5 min | 2 | 5 |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 02-04]: AbortController in useRef not useState — changing ref must not trigger re-render cycle
 - [Phase 02-04]: dynamic() with ssr:false pattern for react-cytoscapejs — accesses window at module load time
 - [Phase 02-04]: AbortError caught silently without toast — user-initiated cancel is not an error
+- [Phase 05-04]: page.tsx kept as Server Component (no 'use client') — Next.js App Router handles client component boundary (LandingNav, HeroSection) correctly at build time
+- [Phase 05-04]: CtaBand links to /sign-in (not /app) — unauthenticated users go to Clerk auth flow
+- [Phase 05-04]: LandingFooter uses new Date().getFullYear() — dynamic copyright year, no hardcoded value
 
 ### Pending Todos
 
@@ -93,5 +97,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Phase 2 complete — ready to plan Phase 3 (Auth + Persistence)
+Stopped at: Phase 5 Plan 04 — checkpoint:human-verify (landing page visual verification + Sentry alert rule OBS-01)
 Resume file: None
