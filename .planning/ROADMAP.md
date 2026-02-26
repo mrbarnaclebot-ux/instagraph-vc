@@ -91,7 +91,13 @@ Plans:
   2. Every page response includes `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and a Content Security Policy header covering script, style, and connect sources
   3. An uncaught exception in either the Next.js frontend or FastAPI backend appears in the Sentry dashboard within 60 seconds, tagged with user context
   4. A `graph_generated` event with `node_count`, `edge_count`, and `source_type` properties appears in PostHog after each successful graph generation; `graph_exported` events fire on JSON and PNG downloads
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Security headers (SEC-05) + Sentry frontend + Sentry FastAPI backend (OBS-01)
+- [ ] 05-02-PLAN.md — PostHog provider, analytics helpers, graph_generated event (OBS-02)
+- [ ] 05-03-PLAN.md — Landing page foundation: DemoGraph canvas, LandingNav, HeroSection (FE-04)
+- [ ] 05-04-PLAN.md — Landing page completion: HowItWorks, PersonaCards, CtaBand, Footer, page assembly + verification (FE-04)
 
 ## Progress
 
@@ -104,10 +110,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
 | 3. Auth + Persistence | 0/TBD | Not started | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
-| 5. Landing Page + Observability | 0/TBD | Not started | - |
+| 5. Landing Page + Observability | 0/4 | Planned     | - |
 
 ---
 *Roadmap created: 2026-02-25*
 *Coverage: 27/27 v1 requirements mapped*
 *Phase 1 planned: 2026-02-25 — 5 plans across 3 waves*
+*Phase 5 planned: 2026-02-26 — 4 plans across 2 waves*
 *AI-02 note: scraping/extraction sub-requirement in Phase 1 (plan 01-03); Redis caching sub-requirement in Phase 4 (with RATE-03)*
