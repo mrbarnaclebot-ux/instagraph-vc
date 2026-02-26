@@ -71,6 +71,14 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick }: Grap
 
   return (
     <div className="relative w-full h-full bg-gray-950">
+      {/* Subtle dot grid background */}
+      <div
+        className="absolute inset-0 opacity-[0.12] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #4b5563 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
       <CytoscapeComponent
         elements={elements}
         stylesheet={cytoscapeStylesheet}

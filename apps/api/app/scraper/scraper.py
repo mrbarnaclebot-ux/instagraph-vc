@@ -71,8 +71,19 @@ def scrape_url(url: str) -> str:
             )
             redirect_count += 1
 
-        response.raise_for_status()
+            response.raise_for_status()
 
+        # Reject non-HTML responses before parsing — PDFs, images, binaries would
+        # produce garbage or crash BeautifulSoup (lxml parser is HTML-only here).
+        content_type = response.headers.get("Content-Type", "")
+        if "text/html" not in content_type and "text/plain" not in content_type:
+            raise HTTPException(status_code=400, detail={
+                "error": "scrape_failed",
+                "message": "Couldn't read that URL — try pasting the text instead",
+            })
+
+    except HTTPException:
+        raise
     except requests.Timeout:
         raise HTTPException(status_code=503, detail={
             "error": "service_unavailable",

@@ -74,9 +74,25 @@ def run_generate_pipeline(
         )
     except Exception as e:
         from fastapi import HTTPException
+        from openai import RateLimitError, AuthenticationError, APIStatusError
+        if isinstance(e, RateLimitError):
+            raise HTTPException(status_code=429, detail={
+                "error": "rate_limited",
+                "message": "Too many requests — please try again in a moment",
+            })
+        if isinstance(e, AuthenticationError):
+            raise HTTPException(status_code=503, detail={
+                "error": "service_unavailable",
+                "message": "AI service configuration error — please try again later",
+            })
+        if isinstance(e, APIStatusError) and e.status_code == 400:
+            raise HTTPException(status_code=400, detail={
+                "error": "invalid_request",
+                "message": "Input could not be processed — try shortening or rephrasing it",
+            })
         raise HTTPException(status_code=503, detail={
             "error": "service_unavailable",
-            "message": "OpenAI service unavailable — please try again",
+            "message": "AI service unavailable — please try again",
         })
 
     parsed: VCKnowledgeGraph = response.choices[0].message.parsed
