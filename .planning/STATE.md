@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 5 of 5 (Landing Page + Observability)
-Plan: 5 of 5 in current phase — Plan 04 complete, Plan 05 is the final plan
-Status: Phase 5 Plan 04 complete — human verification passed (Playwright + Sentry approved)
-Last activity: 2026-02-26 — Phase 5 Plan 04 complete: all sections verified by Playwright; human checkpoint approved
+Plan: 5 of 5 in current phase — Plan 05 complete (final plan in phase)
+Status: Phase 5 complete — all 5 plans executed; UAT Gap 1 (PostHog guard) closed
+Last activity: 2026-02-26 — Phase 5 Plan 05 complete: PostHog init guard added, OBS-02 closed
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Progress: [████████░░] 80%
 | 02-monorepo-vertical-slice | P05 | 3 min | 2 | 3 |
 | 02-monorepo-vertical-slice | P04 | 2 min | 1 | 3 |
 | 05-landing-page-observability | P04 | 5 min | 2 | 5 |
+| 05-landing-page-observability | P05 | 1 min | 1 | 1 |
 
 ## Accumulated Context
 
@@ -82,6 +83,8 @@ Recent decisions affecting current work:
 - [Phase 05-04]: page.tsx kept as Server Component (no 'use client') — Next.js App Router handles client component boundary (LandingNav, HeroSection) correctly at build time
 - [Phase 05-04]: CtaBand links to /sign-in (not /app) — unauthenticated users go to Clerk auth flow
 - [Phase 05-04]: LandingFooter uses new Date().getFullYear() — dynamic copyright year, no hardcoded value
+- [Phase 05-landing-page-observability]: Truthiness check for PostHog key guard (not !== undefined) — also filters empty string which posthog rejects the same way
+- [Phase 05-landing-page-observability]: TypeScript non-null assertion (!) removed from posthog.init() — string is narrowed to defined value inside if block, making ! redundant
 
 ### Pending Todos
 
@@ -97,5 +100,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Phase 5 Plan 04 complete — checkpoint:human-verify passed; ready for Plan 05 (final Phase 5 plan)
+Stopped at: Phase 5 Plan 05 complete — PostHog init guard added; UAT Gap 1 closed; Phase 5 fully complete
 Resume file: None

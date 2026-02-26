@@ -112,7 +112,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
 | 3. Auth + Persistence | 0/TBD | Not started | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
-| 5. Landing Page + Observability | 4/6 | Gap closure in progress | - |
+| 5. Landing Page + Observability | 5/6 | In Progress|  |
 
 ---
 *Roadmap created: 2026-02-25*

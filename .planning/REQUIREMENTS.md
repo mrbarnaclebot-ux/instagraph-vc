@@ -58,7 +58,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Observability
 
 - [x] **OBS-01**: Sentry is configured on both the Next.js frontend and FastAPI backend; uncaught exceptions and API errors (5xx) are captured with user context; alert fires when error rate exceeds 1% in a 5-minute window
-- [ ] **OBS-02**: PostHog is configured on the frontend and tracks `graph_generated` (with node_count, edge_count, source_type), `graph_exported` (with format), and `graph_history_viewed` events
+- [x] **OBS-02**: PostHog is configured on the frontend and tracks `graph_generated` (with node_count, edge_count, source_type), `graph_exported` (with format), and `graph_history_viewed` events
 - [ ] **OBS-03**: (Covered by SEC-05 — security headers include CSP)
 
 ---
@@ -137,7 +137,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXP-01 | Phase 4 | Pending | |
 | EXP-02 | Phase 4 | Pending | |
 | OBS-01 | Phase 5 | Complete | |
-| OBS-02 | Phase 5 | Pending | |
+| OBS-02 | Phase 5 | Complete | |
 
 **Coverage:**
 - v1 requirements: 27 total
