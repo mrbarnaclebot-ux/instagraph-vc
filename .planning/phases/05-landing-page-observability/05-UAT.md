@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-landing-page-observability
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md]
 started: 2026-02-26T07:30:00Z
@@ -71,13 +71,31 @@ skipped: 0
   reason: "User reported: PostHog console.error fires on every page load: 'PostHog was initialized without a token'"
   severity: minor
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "posthog.init() called unconditionally in useEffect — TypeScript ! operator provides no runtime guard; posthog receives undefined/empty string and fires console.error"
+  artifacts:
+    - path: "apps/web/app/providers.tsx"
+      issue: "line 9: posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, ...) — no conditional guard, ! is TypeScript-only and erased at runtime"
+  missing:
+    - "Wrap posthog.init() in if (process.env.NEXT_PUBLIC_POSTHOG_KEY) { ... } to short-circuit when env var is absent"
+  debug_session: ".planning/debug/posthog-console-error-missing-guard.md"
 
 - truth: "After submitting text in the hero textarea, the generated graph renders visually on the landing page"
   status: failed
   reason: "User reported: generates but does not show graph"
   severity: major
   test: 9
-  artifacts: []
-  missing: []
+  root_cause: "HeroSection stores only scalar counts (nodes: number, edges: number) after API success — the VCGraph object is discarded. No GraphCanvas import exists; success block renders a text badge only. Right column always shows static DemoGraph."
+  artifacts:
+    - path: "apps/web/components/landing/HeroSection.tsx"
+      issue: "line 9: state type is { nodes: number; edges: number } — VCGraph never stored"
+    - path: "apps/web/components/landing/HeroSection.tsx"
+      issue: "lines 31-37: data.graph discarded after count extraction; setResult stores scalars only"
+    - path: "apps/web/components/landing/HeroSection.tsx"
+      issue: "lines 82-91: success block renders text badge; no GraphCanvas render path exists"
+  missing:
+    - "Replace { nodes, edges } state with VCGraph | null state"
+    - "Store data.graph directly with setGraph(data.graph) in API success handler"
+    - "Add dynamic(() => import('@/components/graph/GraphCanvas'), { ssr: false }) — mandatory to avoid SSR crash"
+    - "Replace text-badge success block with GraphCanvas render in right column, replacing DemoGraph when result exists"
+    - "Retain Sign up to save prompt as overlay/caption on canvas"
+  debug_session: ".planning/debug/hero-graph-not-rendering.md"
