@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 2 of 5 (Monorepo Vertical Slice)
-Plan: 1 of 4 in current phase — Plan 02-01 complete
+Plan: 4 of 5 in current phase — Plan 02-04 complete
 Status: Phase 2 in progress
-Last activity: 2026-02-25 — Plan 02-01 complete: Turborepo monorepo foundation with pnpm workspaces, @graphvc/shared-types, Next.js 16 skeleton
+Last activity: 2026-02-26 — Plan 02-04 complete: /app workspace page with state machine, GraphCanvas dynamic ssr:false, FE-05 toasts, AbortController cancel
 
-Progress: [███░░░░░░░] 24%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 2 min
-- Total execution time: ~0.1 hours
+- Total execution time: ~0.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-backend-foundation | 5 | ~10 min | ~2 min |
-| 02-monorepo-vertical-slice | 1 | ~3 min | ~3 min |
+| 02-monorepo-vertical-slice | 3 | ~8 min | ~3 min |
 
 **Recent Trend:**
-- Last 6 plans: 01-01 (3 min), 01-02 (1 min), 01-03 (~5 min), 01-04 (1 min), 01-05 (3 min), 02-01 (3 min)
+- Last 6 plans: 01-02 (1 min), 01-03 (~5 min), 01-04 (1 min), 01-05 (3 min), 02-01 (3 min), 02-04 (2 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -40,6 +40,8 @@ Progress: [███░░░░░░░] 24%
 |-------|------|----------|-------|-------|
 | 01-backend-foundation | P05 | 3 min | 2 | 6 |
 | 02-monorepo-vertical-slice | P01 | 3 min | 3 | 21 |
+| 02-monorepo-vertical-slice | P05 | 3 min | 2 | 3 |
+| 02-monorepo-vertical-slice | P04 | 2 min | 1 | 3 |
 
 ## Accumulated Context
 
@@ -69,6 +71,13 @@ Recent decisions affecting current work:
 - [02-01]: workspace:* protocol required for pnpm internal package links — version strings cause npm registry lookup failure
 - [02-01]: turbo.json uses 'tasks' key not 'pipeline' — pipeline is deprecated in Turborepo v2
 - [02-01]: NEXT_PUBLIC_API_URL env var with localhost:8000 default in next.config.ts — works in dev without .env.local, overridable for production
+- [02-05]: Vercel CLI (pull/build/deploy) over GitHub App — fine-grained monorepo control, scoped to apps/web working-directory
+- [02-05]: astral-sh/setup-uv@v3 for Python CI — official action, cleaner than pip install uv bootstrap
+- [02-05]: pnpm install --frozen-lockfile in CI — deterministic installs, fails fast on lock file drift
+- [02-05]: Railway 30s timeout risk documented in deploy-production.yml comment — surfaces known concern directly in workflow
+- [Phase 02-04]: AbortController in useRef not useState — changing ref must not trigger re-render cycle
+- [Phase 02-04]: dynamic() with ssr:false pattern for react-cytoscapejs — accesses window at module load time
+- [Phase 02-04]: AbortError caught silently without toast — user-initiated cancel is not an error
 
 ### Pending Todos
 
@@ -83,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-25
-Stopped at: Completed 02-01-PLAN.md — Turborepo monorepo foundation with @graphvc/shared-types and Next.js 16 skeleton
+Last session: 2026-02-26
+Stopped at: Completed 02-04-PLAN.md — app workspace page with state machine, GraphCanvas dynamic ssr:false, FE-05 toasts, AbortController cancel
 Resume file: None
