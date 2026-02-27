@@ -8,12 +8,14 @@ def persist_graph(
     session_id: str,
     nodes: list[dict[str, Any]],
     edges: list[dict[str, Any]],
+    user_id: str = "anonymous",  # AI-05: ownership field
 ) -> None:
     """
-    Persists graph nodes and relationships to Neo4j (SEC-02, AI-01).
+    Persists graph nodes and relationships to Neo4j (SEC-02, AI-01, AI-05).
 
     Security: ALL Cypher queries use $param syntax — zero string interpolation.
     Scope: All nodes/edges get session_id property for query isolation (CONTEXT.md).
+    Ownership: created_by = user_id (Clerk user_id or "anonymous" for trial graphs).
     Pattern: Uses UNWIND for batch writes — single query per node/edge batch.
 
     Each node dict: {id, label, type, properties}
@@ -26,7 +28,7 @@ def persist_graph(
     ]
 
     with driver.session() as session:
-        # Persist nodes — parameterized UNWIND batch insert
+        # Persist nodes with created_by (AI-05) and created_at
         # NOTE: Entity label is constant (not user-supplied) so dynamic label is safe here.
         # The type property (Investor/Project/Round/Narrative/Person) is stored as a
         # property, not a label — avoids dynamic label injection entirely.
@@ -38,11 +40,14 @@ def persist_graph(
                 label:      node.label,
                 type:       node.type,
                 properties: node.properties,
-                session_id: $session_id
+                session_id: $session_id,
+                created_by: $user_id,
+                created_at: datetime()
             })
             """,
             nodes=serialized_nodes,
             session_id=session_id,
+            user_id=user_id,  # parameterized — never interpolated
         )
 
         # Persist relationships — parameterized UNWIND batch insert
