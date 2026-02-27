@@ -2,7 +2,7 @@
 
 import { useAuth } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import InputCard from '@/components/input/InputCard'
@@ -28,6 +28,18 @@ const GraphCanvas = dynamic(
 type Status = 'idle' | 'loading' | 'success'
 
 export default function AppPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center bg-gray-950">
+        <div className="w-6 h-6 border-2 border-transparent border-t-indigo-500 rounded-full animate-spin" />
+      </div>
+    }>
+      <AppPageInner />
+    </Suspense>
+  )
+}
+
+function AppPageInner() {
   const { getToken } = useAuth()
   const searchParams = useSearchParams()
 

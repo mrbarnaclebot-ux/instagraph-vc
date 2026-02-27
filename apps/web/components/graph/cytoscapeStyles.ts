@@ -1,6 +1,6 @@
-import type Cytoscape from 'cytoscape'
-
-export const cytoscapeStylesheet: Cytoscape.StylesheetStyle[] = [
+// Shadow properties are valid cytoscape.js CSS but missing from @types/cytoscape
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const cytoscapeStylesheet: any[] = [
   // Base node style — all nodes share these defaults
   {
     selector: 'node',
@@ -9,7 +9,7 @@ export const cytoscapeStylesheet: Cytoscape.StylesheetStyle[] = [
       'text-valign': 'center',
       'text-halign': 'center',
       'font-size': 11,
-      'font-weight': '600',
+      'font-weight': 600,
       'color': '#ffffff',
       'text-outline-width': 2,
       'width': 'label',
@@ -117,7 +117,7 @@ export const cytoscapeStylesheet: Cytoscape.StylesheetStyle[] = [
       'curve-style': 'bezier',
       'label': 'data(label)',
       'font-size': 8,
-      'font-weight': '500',
+      'font-weight': 500,
       'text-rotation': 'autorotate',
       'text-background-color': '#0f172a',
       'text-background-opacity': 0.85,
