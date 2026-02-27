@@ -2,7 +2,8 @@
 
 import { useAuth } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import InputCard from '@/components/input/InputCard'
 import LoadingSteps from '@/components/input/LoadingSteps'
@@ -28,6 +29,7 @@ type Status = 'idle' | 'loading' | 'success'
 
 export default function AppPage() {
   const { getToken } = useAuth()
+  const searchParams = useSearchParams()
 
   const [status, setStatus] = useState<Status>('idle')
   const [graph, setGraph] = useState<VCGraph | null>(null)
@@ -36,6 +38,36 @@ export default function AppPage() {
   const [lastInput, setLastInput] = useState<{ value: string; isUrl: boolean } | null>(null)
 
   const controllerRef = useRef<AbortController | null>(null)
+
+  // FE-03: load graph from history when navigated via ?session= param
+  useEffect(() => {
+    const sessionId = searchParams.get('session')
+    if (!sessionId) return
+    let cancelled = false
+    ;(async () => {
+      setStatus('loading')
+      setInputCollapsed(true)
+      try {
+        const token = await getToken()
+        const res = await fetch(`/api/generate/session/${sessionId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        })
+        if (!res.ok) throw new Error('Failed to load graph')
+        const data = await res.json()
+        if (!cancelled) {
+          setGraph(data.graph)
+          setStatus('success')
+        }
+      } catch {
+        if (!cancelled) {
+          toast.error('Could not load graph from history')
+          setStatus('idle')
+          setInputCollapsed(false)
+        }
+      }
+    })()
+    return () => { cancelled = true }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = useCallback(async (input: string, isUrl: boolean) => {
     // Abort any in-flight request

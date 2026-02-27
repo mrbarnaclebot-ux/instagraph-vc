@@ -5,6 +5,7 @@ from neo4j import Driver
 from app.dependencies import get_current_user, get_neo4j_driver, get_supabase_client
 from app.generate.schemas import GenerateRequest, GenerateResponse
 from app.generate.service import run_generate_pipeline
+from app.graph.repository import get_graph_by_session
 
 router = APIRouter(prefix="/api", tags=["generate"])
 
@@ -70,3 +71,14 @@ async def generate(
             pass  # Fire-and-forget
 
     return result
+
+
+@router.get("/generate/session/{session_id}")
+async def get_session(
+    session_id: str,
+    current_user: dict = Depends(get_current_user),
+    driver: Driver = Depends(get_neo4j_driver),
+) -> dict:
+    """Retrieve a previously generated graph by session_id (FE-03: history reload)."""
+    graph = get_graph_by_session(driver, session_id)
+    return {"graph": graph, "meta": {"session_id": session_id, "token_count": 0, "source_type": "text", "processing_ms": 0}}
