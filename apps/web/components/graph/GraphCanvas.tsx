@@ -5,7 +5,6 @@ import Cytoscape from 'cytoscape'
 import fcose from 'cytoscape-fcose'
 import { useRef, useCallback, useEffect } from 'react'
 import { cytoscapeStylesheet } from './cytoscapeStyles'
-import { exportGraphAsPng } from '@/lib/export'
 import type { VCGraph } from '@graphvc/shared-types'
 
 // Register fcose layout once at module level — NOT inside component (would re-register on every render)
@@ -15,10 +14,10 @@ interface GraphCanvasProps {
   graph: VCGraph
   selectedNodeId: string | null
   onNodeClick: (nodeId: string | null) => void
-  onExportJson?: () => void
+  onCyInit?: (cy: Cytoscape.Core) => void // Exposes cy instance to parent for export
 }
 
-export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onExportJson }: GraphCanvasProps) {
+export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyInit }: GraphCanvasProps) {
   const cyRef = useRef<Cytoscape.Core | null>(null)
 
   // When selectedNodeId changes externally (e.g., from detail panel navigation), sync highlight
@@ -38,6 +37,7 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onExpo
 
   const handleCyInit = useCallback((cy: Cytoscape.Core) => {
     cyRef.current = cy
+    onCyInit?.(cy)
 
     // Node tap: highlight neighborhood + open detail panel
     cy.on('tap', 'node', (evt) => {
@@ -56,7 +56,7 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onExpo
         onNodeClick(null)
       }
     })
-  }, [onNodeClick])
+  }, [onNodeClick, onCyInit])
 
   const elements = [
     ...graph.nodes.map((n) => ({
@@ -69,10 +69,6 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onExpo
 
   const handleFit = () => {
     cyRef.current?.fit(undefined, 40)
-  }
-
-  const handleExportPng = () => {
-    if (cyRef.current) exportGraphAsPng(cyRef.current)
   }
 
   return (
@@ -117,32 +113,8 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onExpo
         ))}
       </div>
 
-      {/* Toolbar — bottom-right */}
-      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-px bg-gray-900/70 backdrop-blur-sm border border-gray-800/50 rounded-lg overflow-hidden">
-        {onExportJson && (
-          <button
-            onClick={onExportJson}
-            title="Export as JSON"
-            className="hover:bg-gray-800/80 text-gray-400 hover:text-white px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
-          >
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 1v3a1 1 0 0 1-1 1H1M13 15V5l-4-4H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1z" />
-            </svg>
-            JSON
-          </button>
-        )}
-        <button
-          onClick={handleExportPng}
-          title="Export as PNG"
-          className="hover:bg-gray-800/80 text-gray-400 hover:text-white px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
-        >
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="1" width="14" height="14" rx="2" />
-            <circle cx="5" cy="5.5" r="1.5" />
-            <path d="M15 10l-3.5-3.5L4 14h10a1 1 0 0 0 1-1v-3z" />
-          </svg>
-          PNG
-        </button>
+      {/* Fit button — stacked above ExportFAB which sits at bottom-4 right-4 */}
+      <div className="absolute bottom-14 right-4 z-10 flex items-center gap-px bg-gray-900/70 backdrop-blur-sm border border-gray-800/50 rounded-lg overflow-hidden">
         <button
           onClick={handleFit}
           title="Fit graph to viewport"
