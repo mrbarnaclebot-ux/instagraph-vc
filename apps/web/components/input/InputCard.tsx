@@ -3,6 +3,8 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import { useState, useRef } from 'react'
 
+const MIN_TEXT_LENGTH = 200
+
 interface InputCardProps {
   collapsed: boolean
   disabled: boolean
@@ -20,6 +22,7 @@ export default function InputCard({ collapsed, disabled, onSubmit, onExpand }: I
 
   const currentInput = mode === 'url' ? urlInput : textInput
   const isUrl = mode === 'url'
+  const textTooShort = mode === 'text' && textInput.trim().length < MIN_TEXT_LENGTH
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -97,11 +100,21 @@ export default function InputCard({ collapsed, disabled, onSubmit, onExpand }: I
                 rows={5}
                 className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none disabled:opacity-50"
               />
+              <div className="mt-1.5 flex justify-between text-xs">
+                <span className={textInput.trim().length >= MIN_TEXT_LENGTH ? 'text-gray-500' : 'text-amber-500'}>
+                  {textInput.trim().length < MIN_TEXT_LENGTH
+                    ? `${MIN_TEXT_LENGTH - textInput.trim().length} more characters needed`
+                    : 'Ready to generate'}
+                </span>
+                <span className="text-gray-600">
+                  {textInput.trim().length}/{MIN_TEXT_LENGTH}
+                </span>
+              </div>
             </Tabs.Content>
 
             <button
               type="submit"
-              disabled={disabled || !currentInput.trim()}
+              disabled={disabled || !currentInput.trim() || textTooShort}
               className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition-colors text-sm"
             >
               Generate Graph

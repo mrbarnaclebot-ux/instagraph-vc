@@ -10,6 +10,8 @@ import { isTrialUsed, markTrialUsed } from '@/lib/trial'
 
 const GraphCanvas = dynamic(() => import('@/components/graph/GraphCanvas'), { ssr: false })
 
+const MIN_TEXT_LENGTH = 200
+
 const NODE_LEGEND = [
   { color: '#6366f1', label: 'Investor' },
   { color: '#10b981', label: 'Project' },
@@ -26,6 +28,9 @@ export default function HeroSection() {
   const [showTrialModal, setShowTrialModal] = useState(false)
   // trialBlocked: true after user dismisses the modal — input stays disabled
   const [trialBlocked, setTrialBlocked] = useState(false)
+
+  const looksLikeUrl = input.trim().startsWith('http://') || input.trim().startsWith('https://')
+  const textTooShort = !looksLikeUrl && input.trim().length < MIN_TEXT_LENGTH && input.trim().length > 0
 
   function handleDismissTrialModal() {
     setShowTrialModal(false)
@@ -134,9 +139,21 @@ export default function HeroSection() {
                   className="w-full rounded-xl bg-gray-900/80 border border-gray-700 text-gray-100 placeholder-gray-600 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
+              {input.trim().length > 0 && !looksLikeUrl && (
+                <div className="flex justify-between text-xs">
+                  <span className={input.trim().length >= MIN_TEXT_LENGTH ? 'text-gray-500' : 'text-amber-400/80'}>
+                    {input.trim().length < MIN_TEXT_LENGTH
+                      ? `${MIN_TEXT_LENGTH - input.trim().length} more characters needed`
+                      : 'Ready to generate'}
+                  </span>
+                  <span className="text-gray-600">
+                    {input.trim().length}/{MIN_TEXT_LENGTH}
+                  </span>
+                </div>
+              )}
               <button
                 type="submit"
-                disabled={!input.trim() || isLoading || trialBlocked}
+                disabled={!input.trim() || isLoading || trialBlocked || textTooShort}
                 className="relative w-full rounded-xl bg-indigo-600 text-white py-3 text-sm font-semibold hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all overflow-hidden group"
               >
                 <span className="relative z-10">
