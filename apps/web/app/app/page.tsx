@@ -8,9 +8,9 @@ import { toast } from 'sonner'
 import InputCard from '@/components/input/InputCard'
 import LoadingSteps from '@/components/input/LoadingSteps'
 import DetailPanel from '@/components/graph/DetailPanel'
+import ExportFAB from '@/components/graph/ExportFAB'
 import { generateGraph, GraphAPIError } from '@/lib/api'
 import { captureGraphGenerated } from '@/lib/analytics'
-import { exportGraphAsJson } from '@/lib/export'
 import type { VCGraph } from '@graphvc/shared-types'
 
 // CRITICAL: ssr:false required — react-cytoscapejs accesses window at module load time
@@ -49,6 +49,7 @@ function AppPageInner() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [inputCollapsed, setInputCollapsed] = useState(false)
   const [lastInput, setLastInput] = useState<{ value: string; isUrl: boolean } | null>(null)
+  const [cyInstance, setCyInstance] = useState<import('cytoscape').Core | null>(null)
 
   const controllerRef = useRef<AbortController | null>(null)
 
@@ -143,6 +144,7 @@ function AppPageInner() {
     setGraph(null)
     setStatus('idle')
     setSelectedNodeId(null)
+    setCyInstance(null)
   }, [])
 
   const handleNodeClick = useCallback((nodeId: string | null) => {
@@ -153,10 +155,6 @@ function AppPageInner() {
   const handleNavigate = useCallback((nodeId: string) => {
     setSelectedNodeId(nodeId)
   }, [])
-
-  const handleExportJson = useCallback(() => {
-    if (graph) exportGraphAsJson(graph)
-  }, [graph])
 
   return (
     <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
@@ -256,8 +254,9 @@ function AppPageInner() {
                 graph={graph}
                 selectedNodeId={selectedNodeId}
                 onNodeClick={handleNodeClick}
-                onExportJson={handleExportJson}
+                onCyInit={setCyInstance}
               />
+              <ExportFAB graph={graph} cyRef={cyInstance} />
             </div>
             {selectedNodeId && (
               <DetailPanel
