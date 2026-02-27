@@ -90,7 +90,12 @@ Plans:
   3. Two different users who submit the same URL within one hour each see their graphs generated from the same cached scrape — only one outbound HTTP request leaves the backend for that URL
   4. User can click "Export JSON" and download a JSON file containing the current graph's nodes and edges in the standard API response format
   5. User can click "Export PNG" and receive a download link to a PNG image of the current Cytoscape canvas captured at full resolution via html-to-image
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Backend rate limiting (Upstash Redis), URL scrape caching, BYOK support, /api/usage endpoint
+- [ ] 04-02-PLAN.md — Graph export FABs (JSON + PNG via cy.png) + Edge middleware IP rate limiting
+- [ ] 04-03-PLAN.md — Frontend rate limit UX: usage counter, API key modal, 429 handling, cached indicator
 
 ### Phase 5: Landing Page + Observability
 **Goal**: The product has a public acquisition surface, is hardened with security headers, and is instrumented so that production errors and user funnel events are visible before any public traffic arrives
