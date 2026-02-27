@@ -71,7 +71,7 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Clerk install + proxy.ts auth guard + ClerkProvider in layout + CSP update for Clerk domains
+- [x] 03-01-PLAN.md — Clerk install + proxy.ts auth guard + ClerkProvider in layout + CSP update for Clerk domains
 - [ ] 03-02-PLAN.md — Supabase backend singleton (FastAPI config/lifespan/dep) + webhook Route Handler + SQL schema
 - [ ] 03-03-PLAN.md — Sign-in/sign-up Clerk pages (catch-all routes) + Bearer token wiring in api.ts + app/page.tsx
 - [ ] 03-04-PLAN.md — Neo4j created_by (AI-05) + service/router user_id wiring + Supabase graphs + request_log
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 5/5 | Complete    | 2026-02-25 |
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
-| 3. Auth + Persistence | 0/6 | Not started | - |
+| 3. Auth + Persistence | 1/6 | In progress | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
 | 5. Landing Page + Observability | 6/6 | Complete   | 2026-02-26 |
 

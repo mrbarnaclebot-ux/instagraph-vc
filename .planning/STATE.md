@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** Users can instantly generate and explore accurate visual maps of crypto VC relationships from any public funding announcement — without spreadsheets, manual research, or expensive tools.
-**Current focus:** Phase 5 — Landing Page + Observability
+**Current focus:** Phase 3 — Auth + Persistence
 
 ## Current Position
 
-Phase: 5 of 5 (Landing Page + Observability)
-Plan: 5 of 5 in current phase — Plan 05 complete (final plan in phase)
-Status: Phase 5 complete — all 5 plans executed; UAT Gap 1 (PostHog guard) closed
-Last activity: 2026-02-26 — Phase 5 Plan 05 complete: PostHog init guard added, OBS-02 closed
+Phase: 3 of 5 (Auth + Persistence)
+Plan: 1 of N in current phase — Plan 01 complete (Clerk install + auth guard)
+Status: Phase 3 in progress — Plan 01 executed; Clerk installed, proxy.ts auth guard active
+Last activity: 2026-02-27 — Phase 3 Plan 01 complete: @clerk/nextjs installed, proxy.ts created, ClerkProvider in layout, CSP updated
 
-Progress: [██████████] 100%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Progress: [██████████] 100%
 | 05-landing-page-observability | P04 | 5 min | 2 | 5 |
 | 05-landing-page-observability | P05 | 1 min | 1 | 1 |
 | Phase 05-landing-page-observability P06 | 5 | 2 tasks | 1 files |
+| 03-auth-persistence | P01 | 2 min | 2 | 5 |
 
 ## Accumulated Context
 
@@ -89,6 +90,10 @@ Recent decisions affecting current work:
 - [Phase 05-landing-page-observability]: Sign up to save caption placed as right-column footer beneath graph — graph context makes prompt more meaningful
 - [Phase 05-landing-page-observability]: Landing page GraphCanvas uses same dynamic() ssr:false pattern as apps/web/app/app/page.tsx
 - [Phase 05-landing-page-observability]: onNodeClick={() => undefined} passed to GraphCanvas on landing page — no detail panel needed, no-op is correct and type-safe
+- [03-01]: proxy.ts not middleware.ts — Next.js 16 uses proxy.ts; middleware.ts is silently ignored and auth guard would not work
+- [03-01]: ClerkProvider wraps outside <html> element — required placement for Clerk context in Server Components
+- [03-01]: NEXT_PUBLIC_CLERK_FRONTEND_API in CSP as env var — handles dev (clerk.accounts.dev) and prod (clerk.your-domain.com) without code changes
+- [03-01]: pnpm --filter web from monorepo root required for add — cd apps/web && pnpm add fails with ERR_PNPM_WORKSPACE_PKG_NOT_FOUND for @graphvc/shared-types@workspace:*
 
 ### Pending Todos
 
@@ -103,6 +108,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-26
-Stopped at: Phase 5 Plan 05 complete — PostHog init guard added; UAT Gap 1 closed; Phase 5 fully complete
+Last session: 2026-02-27
+Stopped at: Phase 3 Plan 01 complete — @clerk/nextjs installed, proxy.ts auth guard created, ClerkProvider in layout, CSP updated for Clerk domains
 Resume file: None

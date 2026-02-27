@@ -39,7 +39,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication & Users
 
-- [ ] **AUTH-01**: User can sign up and sign in via Clerk with email/password or Google OAuth; all `/app/*` routes redirect unauthenticated users to `/sign-in`; Clerk JWT is sent as `Authorization: Bearer` header on all API calls
+- [x] **AUTH-01**: User can sign up and sign in via Clerk with email/password or Google OAuth; all `/app/*` routes redirect unauthenticated users to `/sign-in`; Clerk JWT is sent as `Authorization: Bearer` header on all API calls
 - [ ] **AUTH-02**: Anonymous user can generate one graph from the landing page hero input without signing in — result is stored in `localStorage`; on second generation attempt, user sees a sign-up prompt modal
 - [ ] **AUTH-03**: Supabase contains a `users` table (id, email, plan, created_at) synced via Clerk `user.created` webhook, and a `graphs` table (id, user_id, title, source_url, node_count, edge_count, neo4j_session_id, created_at) updated on every graph save
 - [ ] **AUTH-04**: Every API request is logged to a Supabase `request_log` table with user_id, endpoint, source_url, IP address, status code, tokens used, and timestamp
