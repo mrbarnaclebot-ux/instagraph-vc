@@ -1,6 +1,6 @@
 {
   "buildCommand": "ROOT=$(git rev-parse --show-toplevel) && cd \"$ROOT/apps/web\" && pnpm build",
-  "outputDirectory": "apps/web/.next",
+  "outputDirectory": ".next",
   "installCommand": "ROOT=$(git rev-parse --show-toplevel) && cd \"$ROOT\" && pnpm install",
   "framework": "nextjs"
 }
