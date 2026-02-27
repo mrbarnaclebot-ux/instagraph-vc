@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T13:16:55.753Z"
+last_updated: "2026-02-27T16:53:10.066Z"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
-  total_plans: 25
-  completed_plans: 25
+  total_plans: 28
+  completed_plans: 27
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 4 of 5 (Guardrails + Export)
-Plan: 0 of 3 in current phase — Phase planned but not yet executed
-Status: UAT complete for Phases 1-3 and 5. Phase 4 is next to execute.
-Last activity: 2026-02-27 — UAT Phases 2-3: all 16 tests passed. Phase 4 confirmed planned-only (no summaries).
+Plan: 2 of 3 in current phase — 04-02 (Export + Rate Limiting) complete
+Status: Executing Phase 4. Plans 04-01 and 04-02 complete. 04-03 remaining.
+Last activity: 2026-02-27 — Completed 04-02: ExportFAB + Edge IP rate limiting
 
-Progress: [████████░░] 75%
+Progress: [█████████░] 85%
 
 ## Performance Metrics
 
@@ -65,6 +65,8 @@ Progress: [████████░░] 75%
 | Phase 03-auth-persistence P06 | 1 | 0 tasks | 0 files |
 | Phase 01-backend-foundation P06 | 2 | 2 tasks | 3 files |
 | Phase 01-backend-foundation PP07 | 1 | 1 tasks | 2 files |
+| Phase 04-guardrails-export PP01 | 10 min | 2 tasks | 12 files |
+| Phase 04-guardrails-export PP02 | 3 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -125,6 +127,8 @@ Recent decisions affecting current work:
 - [Phase 01-06]: MIN_TEXT_LENGTH = 200 matches backend validate_input_length() threshold
 - [Phase 01-06]: 503 override only triggers when detail.message is generic 'HTTP 503' -- preserves real application 503s
 - [Phase 01-07]: headers as real dict (not mock return_value) -- .get() works naturally, future bracket access won't break
+- [Phase 04-guardrails-export]: get_remaining/get_reset SDK methods for usage peek (upstash-ratelimit 1.1.0 Python)
+- [Phase 04-guardrails-export]: BYOK creates transient OpenAI client per request -- never stored as singleton, never logged
 
 ### Pending Todos
 
@@ -140,5 +144,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 01-07-PLAN.md (test mock Content-Type fix: 29/29 tests green)
+Stopped at: Completed 04-02-PLAN.md (ExportFAB + Edge IP rate limiting)
 Resume file: None

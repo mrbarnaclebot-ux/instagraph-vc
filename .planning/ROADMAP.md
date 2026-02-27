@@ -126,7 +126,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Backend Foundation | 6/7 | Gap closure planned | 7/10 passed (diagnosed) | 2026-02-25 |
 | 2. Monorepo + Vertical Slice | 6/6 | Complete | 8/8 passed | 2026-02-26 |
 | 3. Auth + Persistence | 6/6 | Complete | 8/8 passed | 2026-02-27 |
-| 4. Guardrails + Export | 0/3 | Planned, not executed | N/A | - |
+| 4. Guardrails + Export | 2/3 | In Progress|  | - |
 | 5. Landing Page + Observability | 6/6 | Complete | 5/6 passed (diagnosed) | 2026-02-26 |
 
 ---
