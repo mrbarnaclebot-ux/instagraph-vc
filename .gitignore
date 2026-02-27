@@ -180,3 +180,5 @@ node_modules/
 # local tool / session files
 .playwright-mcp/
 my-spec.md
+.mcp.json
+/.planning
