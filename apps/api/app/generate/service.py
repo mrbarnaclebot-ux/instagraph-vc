@@ -1,5 +1,7 @@
 import time
 import uuid
+from urllib.parse import urlparse
+from datetime import datetime
 from openai import OpenAI
 
 from app.config import settings
@@ -20,18 +22,38 @@ def _get_openai_client() -> OpenAI:
     return _openai_client
 
 
+def _auto_title(raw_input: str) -> str:
+    """
+    Generate a display title for a graph (CONTEXT.md: Graph naming locked decision).
+    - URL inputs: "domain.com · Feb 27"
+    - Text inputs: first 60 chars, truncated with ellipsis if longer
+    """
+    if raw_input.strip().startswith("https://"):
+        domain = urlparse(raw_input.strip()).netloc.removeprefix("www.")
+        date_str = datetime.now().strftime("%b %-d")  # e.g. "Feb 27"
+        return f"{domain} · {date_str}"
+    else:
+        text = raw_input.strip()
+        return (text[:60] + "...") if len(text) > 60 else text
+
+
 def run_generate_pipeline(
     raw_input: str,
     driver,
+    user_id: str = "anonymous",    # AI-05: graph ownership
+    supabase=None,                  # AUTH-03/04: pass app.state.supabase or None
 ) -> dict:
     """
-    Full generate pipeline (AI-01, AI-02, AI-03, AI-04):
+    Full generate pipeline (AI-01, AI-02, AI-03, AI-04, AI-05).
+    Now accepts user_id for graph ownership and supabase for metadata persistence.
+
     1. Validate input length (>=200 chars) via validate_input_length()
     2. Detect source type: URL (starts with https://) or raw text
     3. If URL: scrape via scrape_url() (includes SSRF guard from Plan 02/03)
     4. Call GPT-4o via native structured outputs -> VCKnowledgeGraph
-    5. Persist to Neo4j via persist_graph() with session_id
-    6. Return API response matching CONTEXT.md contract
+    5. Persist to Neo4j via persist_graph() with session_id + user_id (AI-05)
+    6. AUTH-03: Save graph metadata to Supabase graphs table (authenticated only)
+    7. Return API response matching CONTEXT.md contract
 
     Returns dict matching GenerateResponse schema:
     {
@@ -103,15 +125,31 @@ def run_generate_pipeline(
     nodes = [node.model_dump(exclude_none=True) for node in parsed.nodes]
     edges = [edge.model_dump() for edge in parsed.edges]
 
-    # Persist to Neo4j — parameterized Cypher only (SEC-02, from Plan 03)
+    # Persist to Neo4j with ownership (AI-05) — parameterized Cypher only (SEC-02)
     try:
-        persist_graph(driver, session_id=session_id, nodes=nodes, edges=edges)
-    except Exception as e:
+        persist_graph(driver, session_id=session_id, nodes=nodes, edges=edges, user_id=user_id)
+    except Exception:
         from fastapi import HTTPException
         raise HTTPException(status_code=503, detail={
             "error": "service_unavailable",
             "message": "Graph database unavailable — please try again",
         })
+
+    # AUTH-03: Save graph metadata to Supabase (authenticated users only)
+    # Fire-and-forget — Supabase failure must never block the API response
+    if supabase is not None and user_id != "anonymous":
+        title = _auto_title(raw_input)
+        try:
+            supabase.table("graphs").insert({
+                "user_id": user_id,
+                "title": title,
+                "source_url": raw_input.strip() if raw_input.strip().startswith("https://") else None,
+                "node_count": len(nodes),
+                "edge_count": len(edges),
+                "neo4j_session_id": session_id,
+            }).execute()
+        except Exception:
+            pass  # Fire-and-forget — graph save failure must not fail the request
 
     processing_ms = int(time.time() * 1000) - start_ms
 
