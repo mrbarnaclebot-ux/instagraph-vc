@@ -128,7 +128,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None.
+1. Add history and export UI to app page (ui)
 
 ### Blockers/Concerns
 
