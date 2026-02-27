@@ -4,6 +4,7 @@ from sentry_sdk.integrations.fastapi import FastApiIntegration
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from neo4j import GraphDatabase
+from supabase import create_client
 from app.config import settings
 from app.generate.router import router as generate_router
 
@@ -36,6 +37,13 @@ async def lifespan(app: FastAPI):
             "CREATE INDEX entity_session_id IF NOT EXISTS "
             "FOR (n:Entity) ON (n.session_id)"
         )
+
+    # Supabase singleton (AUTH-03, AUTH-04) — only init if configured
+    if settings.supabase_url and settings.supabase_key:
+        app.state.supabase = create_client(settings.supabase_url, settings.supabase_key)
+    else:
+        app.state.supabase = None  # Graceful degradation when not configured
+
     yield
     # Shutdown — always close in neo4j 5.x (mandatory in 6.x)
     app.state.neo4j_driver.close()
