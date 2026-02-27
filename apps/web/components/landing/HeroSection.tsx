@@ -59,7 +59,11 @@ export default function HeroSection() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.message ?? 'Something went wrong. Try again.')
+        if (res.status === 503 && !data.message) {
+          setError('Service is warming up — please wait a moment and try again.')
+        } else {
+          setError(data.message ?? 'Something went wrong. Try again.')
+        }
         return
       }
       const data = await res.json()

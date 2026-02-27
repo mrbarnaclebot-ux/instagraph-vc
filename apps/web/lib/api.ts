@@ -47,6 +47,13 @@ export async function generateGraph(
     } catch {
       // non-JSON error body — keep default
     }
+    // Friendly message for 503 (Render free-tier cold start returns HTML, not JSON)
+    if (response.status === 503 && detail.message === 'HTTP 503') {
+      detail = {
+        error: 'service_unavailable',
+        message: 'Service is warming up — please wait a moment and try again',
+      }
+    }
     throw new GraphAPIError(response.status, detail)
   }
 
