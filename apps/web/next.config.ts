@@ -2,7 +2,22 @@ import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
 
 const isDev = process.env.NODE_ENV === 'development'
-const clerkFrontendApi = process.env.NEXT_PUBLIC_CLERK_FRONTEND_API ?? ''
+
+// Derive Clerk frontend API from publishable key (pk_test_<base64url> → hostname)
+// Falls back to NEXT_PUBLIC_CLERK_FRONTEND_API if set explicitly
+function getClerkFrontendApi(): string {
+  const explicit = process.env.NEXT_PUBLIC_CLERK_FRONTEND_API
+  if (explicit) return explicit
+  const pk = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? ''
+  if (!pk) return ''
+  try {
+    const b64 = pk.replace(/^pk_(test|live)_/, '').replace(/\$+$/, '')
+    return Buffer.from(b64, 'base64url').toString('utf-8').replace(/\$+$/, '')
+  } catch {
+    return ''
+  }
+}
+const clerkFrontendApi = getClerkFrontendApi()
 
 const securityHeaders = [
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
