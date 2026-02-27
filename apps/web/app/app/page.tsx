@@ -166,8 +166,72 @@ function AppPageInner() {
       {/* Main area: loading overlay, canvas, or empty state */}
       <div className="flex-1 relative overflow-hidden flex">
         {status === 'idle' && !graph && (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-gray-600 text-sm">Enter a URL or paste text above to generate a graph</p>
+          <div className="flex-1 flex flex-col items-center justify-center gap-8 animate-fade-in-up">
+            {/* Constellation: entity-type colored dots in a network pattern */}
+            <div className="relative w-36 h-36">
+              {/* Connecting lines */}
+              <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 144 144">
+                <line x1="72" y1="22" x2="118" y2="52" stroke="#6366f1" strokeWidth="0.75" />
+                <line x1="118" y1="52" x2="100" y2="110" stroke="#8b5cf6" strokeWidth="0.75" />
+                <line x1="100" y1="110" x2="44" y2="110" stroke="#f59e0b" strokeWidth="0.75" />
+                <line x1="44" y1="110" x2="26" y2="52" stroke="#ec4899" strokeWidth="0.75" />
+                <line x1="26" y1="52" x2="72" y2="22" stroke="#10b981" strokeWidth="0.75" />
+                <line x1="72" y1="22" x2="100" y2="110" stroke="#374151" strokeWidth="0.5" />
+                <line x1="26" y1="52" x2="118" y2="52" stroke="#374151" strokeWidth="0.5" />
+              </svg>
+
+              {/* Investor node (top) */}
+              <div
+                className="absolute w-3.5 h-3.5 rounded-full bg-indigo-500/70 shadow-[0_0_12px_3px_rgba(99,102,241,0.25)] animate-float"
+                style={{ top: '16px', left: '64px' }}
+              />
+              {/* Project node (top-right) */}
+              <div
+                className="absolute w-3 h-3 rounded-sm bg-emerald-500/70 shadow-[0_0_12px_3px_rgba(16,185,129,0.25)] animate-float"
+                style={{ top: '44px', right: '18px', animationDelay: '0.6s' }}
+              />
+              {/* Round node (bottom-right) */}
+              <div
+                className="absolute w-2.5 h-2.5 rotate-45 bg-amber-500/70 shadow-[0_0_12px_3px_rgba(245,158,11,0.25)] animate-float"
+                style={{ bottom: '28px', right: '36px', animationDelay: '1.2s' }}
+              />
+              {/* Narrative node (bottom-left) */}
+              <div
+                className="absolute w-2.5 h-2.5 bg-violet-500/70 shadow-[0_0_12px_3px_rgba(139,92,246,0.25)] animate-float"
+                style={{ bottom: '28px', left: '36px', animationDelay: '0.3s', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+              />
+              {/* Person node (top-left) */}
+              <div
+                className="absolute w-3 h-3 rounded-full bg-pink-500/70 shadow-[0_0_12px_3px_rgba(236,72,153,0.25)] animate-float"
+                style={{ top: '44px', left: '18px', animationDelay: '0.9s' }}
+              />
+            </div>
+
+            {/* Text */}
+            <div className="text-center space-y-3">
+              <p className="text-gray-400 text-sm font-medium">
+                Paste a URL or text to map VC relationships
+              </p>
+              {/* Entity legend */}
+              <div className="flex items-center justify-center gap-4 text-[10px] text-gray-600">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/60" />
+                  Investors
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-sm bg-emerald-500/60" />
+                  Projects
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+                  Rounds
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-pink-500/60" />
+                  People
+                </span>
+              </div>
+            </div>
           </div>
         )}
 

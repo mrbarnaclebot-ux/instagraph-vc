@@ -27,34 +27,65 @@ export default function LoadingSteps({ isUrl, onCancel }: LoadingStepsProps) {
   }, [steps.length])
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full bg-gray-950 gap-6">
-      {/* Spinner */}
-      <div className="relative">
-        <div className="w-10 h-10 border-2 border-gray-700 rounded-full" />
-        <div className="absolute inset-0 w-10 h-10 border-2 border-transparent border-t-indigo-500 rounded-full animate-spin" />
+    <div className="flex flex-col items-center justify-center w-full h-full bg-gray-950 gap-8">
+      {/* Sonar rings */}
+      <div className="relative w-24 h-24">
+        {/* Pulsing ring layers */}
+        <div
+          className="absolute inset-0 rounded-full border border-indigo-500/30 animate-sonar"
+        />
+        <div
+          className="absolute inset-2 rounded-full border border-violet-500/25 animate-sonar"
+          style={{ animationDelay: '0.4s' }}
+        />
+        <div
+          className="absolute inset-4 rounded-full border border-indigo-400/20 animate-sonar"
+          style={{ animationDelay: '0.8s' }}
+        />
+
+        {/* Static inner ring */}
+        <div className="absolute inset-[26px] rounded-full border border-gray-800" />
+
+        {/* Center core */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_16px_4px_rgba(99,102,241,0.4)]" />
+        </div>
       </div>
 
-      {/* Current step label */}
-      <p className="text-sm text-gray-400 font-medium min-h-[1.25rem] text-center">
+      {/* Step label */}
+      <p
+        key={stepIndex}
+        className="text-sm text-gray-300 font-medium tracking-wide animate-fade-in-up"
+      >
         {steps[stepIndex]}
       </p>
 
-      {/* Step dots */}
-      <div className="flex gap-1.5">
+      {/* Step progression dots with connecting lines */}
+      <div className="flex items-center gap-0">
         {steps.map((_, i) => (
-          <div
-            key={i}
-            className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-              i === stepIndex ? 'bg-indigo-500' : 'bg-gray-700'
-            }`}
-          />
+          <div key={i} className="flex items-center">
+            <div
+              className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                i <= stepIndex
+                  ? 'bg-indigo-500 shadow-[0_0_8px_2px_rgba(99,102,241,0.3)] scale-100'
+                  : 'bg-gray-700 scale-75'
+              }`}
+            />
+            {i < steps.length - 1 && (
+              <div
+                className={`w-8 h-[1px] transition-colors duration-500 ${
+                  i < stepIndex ? 'bg-indigo-500/40' : 'bg-gray-800'
+                }`}
+              />
+            )}
+          </div>
         ))}
       </div>
 
-      {/* Cancel button */}
+      {/* Cancel */}
       <button
         onClick={onCancel}
-        className="mt-2 text-xs text-gray-500 hover:text-gray-300 underline underline-offset-2 transition-colors"
+        className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
       >
         Cancel
       </button>

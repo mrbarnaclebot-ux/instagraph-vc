@@ -96,12 +96,30 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick }: Grap
         pixelRatio={1}
         hideEdgesOnViewport={true}
       />
-      {/* Fit button — positioned at bottom-right of canvas (CONTEXT.md decision) */}
+      {/* Entity legend — bottom-left */}
+      <div className="absolute bottom-4 left-4 z-10 flex items-center gap-3 bg-gray-900/70 backdrop-blur-sm border border-gray-800/50 rounded-lg px-3 py-2">
+        {[
+          { label: 'Investor', color: 'bg-indigo-500' },
+          { label: 'Project', color: 'bg-emerald-500' },
+          { label: 'Round', color: 'bg-amber-500' },
+          { label: 'Person', color: 'bg-pink-500' },
+        ].map((t) => (
+          <span key={t.label} className="flex items-center gap-1 text-[9px] text-gray-500">
+            <span className={`w-1.5 h-1.5 rounded-full ${t.color}/70`} />
+            {t.label}
+          </span>
+        ))}
+      </div>
+
+      {/* Fit button — bottom-right */}
       <button
         onClick={handleFit}
         title="Fit graph to viewport"
-        className="absolute bottom-4 right-4 z-10 bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-300 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
+        className="absolute bottom-4 right-4 z-10 bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/80 border border-gray-800/50 hover:border-gray-700/60 text-gray-400 hover:text-white rounded-lg px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
       >
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+        </svg>
         Fit
       </button>
     </div>
