@@ -58,6 +58,11 @@ export default function HeroSection() {
         body: JSON.stringify({ input: input.trim() }),
       })
       if (!res.ok) {
+        // 429: anonymous user hit server-side rate limit — show sign-up modal
+        if (res.status === 429) {
+          setShowTrialModal(true)
+          return
+        }
         const data = await res.json().catch(() => ({}))
         if (res.status === 503 && !data.message) {
           setError('Service is warming up — please wait a moment and try again.')

@@ -11,7 +11,10 @@ import DetailPanel from '@/components/graph/DetailPanel'
 import ExportFAB from '@/components/graph/ExportFAB'
 import { generateGraph, GraphAPIError } from '@/lib/api'
 import { captureGraphGenerated } from '@/lib/analytics'
-import type { VCGraph } from '@graphvc/shared-types'
+import UsageCounter from '@/components/ratelimit/UsageCounter'
+import ApiKeyModal from '@/components/ratelimit/ApiKeyModal'
+import CachedIndicator from '@/components/ratelimit/CachedIndicator'
+import type { VCGraph, GenerateMeta } from '@graphvc/shared-types'
 
 // CRITICAL: ssr:false required — react-cytoscapejs accesses window at module load time
 const GraphCanvas = dynamic(
@@ -50,6 +53,9 @@ function AppPageInner() {
   const [inputCollapsed, setInputCollapsed] = useState(false)
   const [lastInput, setLastInput] = useState<{ value: string; isUrl: boolean } | null>(null)
   const [cyInstance, setCyInstance] = useState<import('cytoscape').Core | null>(null)
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false)
+  const [usageRefreshKey, setUsageRefreshKey] = useState(0)
+  const [lastMeta, setLastMeta] = useState<GenerateMeta | null>(null)
 
   const controllerRef = useRef<AbortController | null>(null)
 
@@ -83,7 +89,7 @@ function AppPageInner() {
     return () => { cancelled = true }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSubmit = useCallback(async (input: string, isUrl: boolean) => {
+  const handleSubmit = useCallback(async (input: string, isUrl: boolean, options?: { forceRefresh?: boolean }) => {
     // Abort any in-flight request
     controllerRef.current?.abort()
     controllerRef.current = new AbortController()
@@ -94,7 +100,7 @@ function AppPageInner() {
     setSelectedNodeId(null)
 
     try {
-      const data = await generateGraph(input, controllerRef.current.signal, getToken)
+      const data = await generateGraph(input, controllerRef.current.signal, getToken, options)
 
       // FE-05: empty graph check
       if (data.graph.nodes.length === 0) {
@@ -105,6 +111,8 @@ function AppPageInner() {
       }
 
       setGraph(data.graph)
+      setLastMeta(data.meta)
+      setUsageRefreshKey(k => k + 1)
       setStatus('success')
       captureGraphGenerated(
         data.graph.nodes.length,
@@ -120,8 +128,12 @@ function AppPageInner() {
       }
 
       if (err instanceof GraphAPIError) {
-        // FE-05: scrape failure specific toast
-        if (err.isScrapeFailure) {
+        if (err.isRateLimited) {
+          // CONTEXT.md: modal appears prompting user to enter their own OpenAI API key
+          setShowApiKeyModal(true)
+          toast.error('Daily generation limit reached')
+        } else if (err.isScrapeFailure) {
+          // FE-05: scrape failure specific toast
           toast.error("Couldn't read that URL — try pasting the text instead")
         } else {
           toast.error(err.message ?? 'Something went wrong')
@@ -145,6 +157,18 @@ function AppPageInner() {
     setStatus('idle')
     setSelectedNodeId(null)
     setCyInstance(null)
+    setLastMeta(null)
+  }, [])
+
+  const handleForceRefresh = useCallback(() => {
+    if (!lastInput) return
+    handleSubmit(lastInput.value, lastInput.isUrl, { forceRefresh: true })
+  }, [lastInput, handleSubmit])
+
+  const handleApiKeySet = useCallback(() => {
+    setShowApiKeyModal(false)
+    setUsageRefreshKey(k => k + 1)
+    toast.success('API key saved — you now have unlimited generations')
   }, [])
 
   const handleNodeClick = useCallback((nodeId: string | null) => {
@@ -165,6 +189,17 @@ function AppPageInner() {
         onSubmit={handleSubmit}
         onExpand={handleExpand}
       />
+
+      {/* Usage counter — always visible below input */}
+      <div className="px-4 py-1.5 flex items-center gap-3">
+        <UsageCounter getToken={getToken} refreshKey={usageRefreshKey} />
+        {lastMeta?.cache_hit && (
+          <CachedIndicator
+            cacheAgeSeconds={lastMeta.cache_age_seconds}
+            onRefresh={handleForceRefresh}
+          />
+        )}
+      </div>
 
       {/* Main area: loading overlay, canvas, or empty state */}
       <div className="flex-1 relative overflow-hidden flex">
@@ -269,6 +304,14 @@ function AppPageInner() {
           </>
         )}
       </div>
+
+      {/* BYOK modal — shown when 429 rate limit hit */}
+      {showApiKeyModal && (
+        <ApiKeyModal
+          onDismiss={() => setShowApiKeyModal(false)}
+          onKeySet={handleApiKeySet}
+        />
+      )}
     </div>
   )
 }
