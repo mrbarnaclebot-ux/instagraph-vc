@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import type { VCGraph } from '@graphvc/shared-types'
 import DemoGraph from './DemoGraph'
+import TrialModal from '@/components/auth/TrialModal'
+import { isTrialUsed, markTrialUsed } from '@/lib/trial'
 
 const GraphCanvas = dynamic(() => import('@/components/graph/GraphCanvas'), { ssr: false })
 
@@ -21,10 +23,25 @@ export default function HeroSection() {
   const [isLoading, setIsLoading] = useState(false)
   const [graph, setGraph] = useState<VCGraph | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showTrialModal, setShowTrialModal] = useState(false)
+  // trialBlocked: true after user dismisses the modal — input stays disabled
+  const [trialBlocked, setTrialBlocked] = useState(false)
+
+  function handleDismissTrialModal() {
+    setShowTrialModal(false)
+    setTrialBlocked(true)
+  }
 
   async function handleTry(e: React.FormEvent) {
     e.preventDefault()
-    if (!input.trim() || isLoading) return
+    if (!input.trim() || isLoading || trialBlocked) return
+
+    // Trial gate: anonymous users get one free graph
+    if (isTrialUsed()) {
+      setShowTrialModal(true)
+      return
+    }
+
     setIsLoading(true)
     setError(null)
     setGraph(null)
@@ -47,6 +64,8 @@ export default function HeroSection() {
         return
       }
       setGraph(vcGraph)
+      // Mark trial as used after first successful generation
+      markTrialUsed()
     } catch {
       setError('Request failed. Please try again.')
     } finally {
@@ -55,6 +74,7 @@ export default function HeroSection() {
   }
 
   return (
+    <>
     <section className="relative overflow-hidden">
       {/* Ambient background glow */}
       <div className="absolute inset-0 pointer-events-none">
@@ -108,14 +128,15 @@ export default function HeroSection() {
                 <textarea
                   value={input}
                   onChange={e => setInput(e.target.value)}
-                  placeholder="Paste a funding announcement, article, or URL..."
+                  placeholder={trialBlocked ? 'Sign up to generate more graphs' : 'Paste a funding announcement, article, or URL...'}
                   rows={4}
-                  className="w-full rounded-xl bg-gray-900/80 border border-gray-700 text-gray-100 placeholder-gray-600 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  disabled={trialBlocked}
+                  className="w-full rounded-xl bg-gray-900/80 border border-gray-700 text-gray-100 placeholder-gray-600 px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               <button
                 type="submit"
-                disabled={!input.trim() || isLoading}
+                disabled={!input.trim() || isLoading || trialBlocked}
                 className="relative w-full rounded-xl bg-indigo-600 text-white py-3 text-sm font-semibold hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all overflow-hidden group"
               >
                 <span className="relative z-10">
@@ -216,5 +237,9 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
+
+    {/* Trial modal — shown when anonymous user attempts second generation */}
+    {showTrialModal && <TrialModal onDismiss={handleDismissTrialModal} />}
+  </>
   )
 }
