@@ -27,9 +27,10 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}${clerkFrontendApi ? ` https://${clerkFrontendApi}` : ''} https://challenges.cloudflare.com`,
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}${clerkFrontendApi ? ` https://${clerkFrontendApi}` : isDev ? ' https://*.accounts.dev' : ''} https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline'",
-      `connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com${clerkFrontendApi ? ` https://${clerkFrontendApi}` : ''}`,
+      `connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com${clerkFrontendApi ? ` https://${clerkFrontendApi}` : isDev ? ' https://*.accounts.dev https://*.clerk.accounts.dev' : ''}`,
+      "worker-src blob:",
       "img-src 'self' blob: data: https://img.clerk.com",
       "font-src 'self'",
       "object-src 'none'",
