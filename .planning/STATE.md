@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T08:21:33.278Z"
+last_updated: "2026-02-27T08:25:30Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 23
-  completed_plans: 21
+  completed_plans: 22
 ---
 
 # Project State
@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 3 of 5 (Auth + Persistence)
-Plan: 4 of 6 in current phase — Plan 04 complete (graph ownership + Supabase persistence)
-Status: Phase 3 in progress — Plans 01-04 executed; Plans 05-06 remaining
-Last activity: 2026-02-27 — Phase 3 Plan 04 complete: Neo4j created_by field, Supabase graphs table save, request_log fire-and-forget
+Plan: 5 of 6 in current phase — Plan 05 complete (graph history page + trial gate)
+Status: Phase 3 in progress — Plans 01-05 executed; Plan 06 remaining
+Last activity: 2026-02-27 — Phase 3 Plan 05 complete: /app/history page, graph API Route Handlers, HistoryCard, TrialModal, trial wiring in HeroSection
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 65%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [██████░░░░] 60%
 | 03-auth-persistence | P01 | 2 min | 2 | 5 |
 | Phase 03-auth-persistence P04 | 3 | 2 tasks | 3 files |
 | Phase 03-auth-persistence PP03 | 2 min | 2 tasks | 4 files |
+| 03-auth-persistence | P05 | 2 min | 2 | 8 |
 
 ## Accumulated Context
 
@@ -114,6 +115,10 @@ Recent decisions affecting current work:
 - [Phase 03-auth-persistence]: Auto-title: URL inputs use domain+date ('techcrunch.com · Feb 27'), text inputs use first 60 chars with ellipsis
 - [Phase 03-auth-persistence]: Clerk catch-all slug [[...sign-in]] required — /sign-in/sso-callback 404s without it
 - [Phase 03-auth-persistence]: getToken parameter optional in generateGraph — preserves backward compatibility for anonymous callers
+- [03-05]: Trial gate in HeroSection (client component), not page.tsx (Server Component) — localStorage requires client context
+- [03-05]: trialBlocked state separate from showTrialModal — tracks post-dismissal disabled state independently of modal visibility
+- [03-05]: Fragment wrapper used in HeroSection return to render TrialModal as sibling to section without DOM wrapper
+- [03-05]: Async params required in Next.js 15+ dynamic Route Handlers — always await params before destructuring
 
 ### Pending Todos
 
@@ -129,5 +134,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Phase 3 Plan 04 complete — Neo4j created_by ownership (AI-05), Supabase graphs table (AUTH-03), request_log fire-and-forget (AUTH-04) wired into generate pipeline
+Stopped at: Phase 3 Plan 05 complete — /app/history page (FE-03), graph API Route Handlers, HistoryCard inline rename/delete, TrialModal (AUTH-02), trial gate wired to HeroSection
 Resume file: None

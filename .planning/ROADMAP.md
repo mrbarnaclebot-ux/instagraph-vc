@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 5/5 | Complete    | 2026-02-25 |
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
-| 3. Auth + Persistence | 1/6 | In progress | - |
+| 3. Auth + Persistence | 5/6 | In Progress|  |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
 | 5. Landing Page + Observability | 6/6 | Complete   | 2026-02-26 |
 

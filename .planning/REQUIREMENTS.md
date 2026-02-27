@@ -33,14 +33,14 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **FE-01**: Authenticated user sees a dashboard at `/app` with a Cytoscape.js graph canvas using VC entity styling: Investor=indigo ellipse, Project=emerald rectangle, Round=amber diamond, Narrative=violet hexagon, Person=pink ellipse; edge styles differ by relationship type; canvas uses performance-optimised Cytoscape config (haystack/bezier edges, `data()` style mappers, `pixelRatio: 1`, `hideEdgesOnViewport: true`)
 - [x] **FE-02**: User can click any node in the graph to open a right-side detail panel showing the node's label, entity type, and all extracted properties (e.g., AUM, stage focus, token ticker); clicking the canvas background closes the panel
-- [ ] **FE-03**: Authenticated user can view their graph history at `/app/history` showing a list of past graphs (title, node count, edge count, source URL, date); can search by title, click to reload a graph, and delete a graph they own
+- [x] **FE-03**: Authenticated user can view their graph history at `/app/history` showing a list of past graphs (title, node count, edge count, source URL, date); can search by title, click to reload a graph, and delete a graph they own
 - [x] **FE-04**: Landing page at `/` has: hero section with input box (anonymous try), embedded animated demo graph showing a sample VC relationship, "How it works" 3-step explainer, use case cards (Analyst / Founder / Journalist), and a footer
 - [x] **FE-05**: User sees appropriate UI for each state: animated progress bar + "Extracting entities..." during generation; toast "Couldn't read that URL — try pasting the text instead" on scrape failure; toast "No VC relationships found" on empty graph; toast with retry button on API error
 
 ### Authentication & Users
 
 - [x] **AUTH-01**: User can sign up and sign in via Clerk with email/password or Google OAuth; all `/app/*` routes redirect unauthenticated users to `/sign-in`; Clerk JWT is sent as `Authorization: Bearer` header on all API calls
-- [ ] **AUTH-02**: Anonymous user can generate one graph from the landing page hero input without signing in — result is stored in `localStorage`; on second generation attempt, user sees a sign-up prompt modal
+- [x] **AUTH-02**: Anonymous user can generate one graph from the landing page hero input without signing in — result is stored in `localStorage`; on second generation attempt, user sees a sign-up prompt modal
 - [x] **AUTH-03**: Supabase contains a `users` table (id, email, plan, created_at) synced via Clerk `user.created` webhook, and a `graphs` table (id, user_id, title, source_url, node_count, edge_count, neo4j_session_id, created_at) updated on every graph save
 - [x] **AUTH-04**: Every API request is logged to a Supabase `request_log` table with user_id, endpoint, source_url, IP address, status code, tokens used, and timestamp
 
@@ -124,11 +124,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AI-05 | Phase 3 | Complete | |
 | FE-01 | Phase 2 | Complete | |
 | FE-02 | Phase 2 | Complete | |
-| FE-03 | Phase 3 | Pending | |
+| FE-03 | Phase 3 | Complete | |
 | FE-04 | Phase 5 | Complete | |
 | FE-05 | Phase 2 | Complete | |
 | AUTH-01 | Phase 3 | Complete | |
-| AUTH-02 | Phase 3 | Pending | |
+| AUTH-02 | Phase 3 | Complete | |
 | AUTH-03 | Phase 3 | Complete | |
 | AUTH-04 | Phase 3 | Complete | |
 | RATE-01 | Phase 4 | Pending | |
