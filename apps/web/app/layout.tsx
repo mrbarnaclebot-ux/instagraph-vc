@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
 import { PostHogProvider } from './providers'
 import './globals.css'
@@ -14,13 +15,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-950 text-gray-100 min-h-screen`}>
-        <PostHogProvider>
-          {children}
-          <Toaster richColors position="top-right" />
-        </PostHogProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className="dark">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-950 text-gray-100 min-h-screen`}>
+          <PostHogProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </PostHogProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

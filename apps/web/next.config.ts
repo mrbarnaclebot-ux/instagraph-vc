@@ -2,6 +2,7 @@ import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
 
 const isDev = process.env.NODE_ENV === 'development'
+const clerkFrontendApi = process.env.NEXT_PUBLIC_CLERK_FRONTEND_API ?? ''
 
 const securityHeaders = [
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
@@ -11,15 +12,16 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}${clerkFrontendApi ? ` https://${clerkFrontendApi}` : ''} https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline'",
-      "connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com",
-      "img-src 'self' blob: data:",
+      `connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com${clerkFrontendApi ? ` https://${clerkFrontendApi}` : ''}`,
+      "img-src 'self' blob: data: https://img.clerk.com",
       "font-src 'self'",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'self'",
+      "frame-src https://challenges.cloudflare.com",
     ].join('; '),
   },
 ]
