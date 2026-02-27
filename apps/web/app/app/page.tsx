@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
 import { useState, useRef, useCallback } from 'react'
 import { toast } from 'sonner'
@@ -26,6 +27,8 @@ const GraphCanvas = dynamic(
 type Status = 'idle' | 'loading' | 'success'
 
 export default function AppPage() {
+  const { getToken } = useAuth()
+
   const [status, setStatus] = useState<Status>('idle')
   const [graph, setGraph] = useState<VCGraph | null>(null)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
@@ -45,7 +48,7 @@ export default function AppPage() {
     setSelectedNodeId(null)
 
     try {
-      const data = await generateGraph(input, controllerRef.current.signal)
+      const data = await generateGraph(input, controllerRef.current.signal, getToken)
 
       // FE-05: empty graph check
       if (data.graph.nodes.length === 0) {
@@ -84,7 +87,7 @@ export default function AppPage() {
       setStatus('idle')
       setInputCollapsed(false)
     }
-  }, [])
+  }, [getToken])
 
   const handleCancel = useCallback(() => {
     controllerRef.current?.abort()

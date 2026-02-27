@@ -26,10 +26,16 @@ export class GraphAPIError extends Error {
 export async function generateGraph(
   input: string,
   signal: AbortSignal,
+  getToken?: (() => Promise<string | null>) | null,  // optional — anonymous callers pass null
 ): Promise<GenerateResponse> {
+  const token = getToken ? await getToken() : null
+
   const response = await fetch('/api/generate', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify({ input }),
     signal,
   })
