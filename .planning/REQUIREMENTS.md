@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **AI-02**: Backend scrapes a public HTTPS URL, strips boilerplate HTML via BeautifulSoup, caps content at 32,000 characters before sending to GPT-4o, and caches the raw scraped text in Redis for 1 hour so identical URLs skip re-scraping
 - [x] **AI-03**: User can paste raw text (funding announcement, article excerpt) directly into the input field as an alternative to URL input — bypasses scraping, goes straight to GPT-4o
 - [x] **AI-04**: Backend rejects inputs shorter than 200 characters with a `400` error and user-facing message "Input too short — paste a full funding announcement or article for best results"
-- [ ] **AI-05**: Generated graph nodes and edges are persisted to Neo4j Aura with `created_by: user_id` ownership field and timestamps; anonymous graphs use `created_by: "anonymous"`
+- [x] **AI-05**: Generated graph nodes and edges are persisted to Neo4j Aura with `created_by: user_id` ownership field and timestamps; anonymous graphs use `created_by: "anonymous"`
 
 ### Frontend
 
@@ -41,8 +41,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **AUTH-01**: User can sign up and sign in via Clerk with email/password or Google OAuth; all `/app/*` routes redirect unauthenticated users to `/sign-in`; Clerk JWT is sent as `Authorization: Bearer` header on all API calls
 - [ ] **AUTH-02**: Anonymous user can generate one graph from the landing page hero input without signing in — result is stored in `localStorage`; on second generation attempt, user sees a sign-up prompt modal
-- [ ] **AUTH-03**: Supabase contains a `users` table (id, email, plan, created_at) synced via Clerk `user.created` webhook, and a `graphs` table (id, user_id, title, source_url, node_count, edge_count, neo4j_session_id, created_at) updated on every graph save
-- [ ] **AUTH-04**: Every API request is logged to a Supabase `request_log` table with user_id, endpoint, source_url, IP address, status code, tokens used, and timestamp
+- [x] **AUTH-03**: Supabase contains a `users` table (id, email, plan, created_at) synced via Clerk `user.created` webhook, and a `graphs` table (id, user_id, title, source_url, node_count, edge_count, neo4j_session_id, created_at) updated on every graph save
+- [x] **AUTH-04**: Every API request is logged to a Supabase `request_log` table with user_id, endpoint, source_url, IP address, status code, tokens used, and timestamp
 
 ### Rate Limiting
 
@@ -121,16 +121,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AI-02 (Redis caching) | Phase 4 | Pending | With RATE-03: cache scraped text in Redis for 1 hour |
 | AI-03 | Phase 1 | Complete | |
 | AI-04 | Phase 1 | Complete | |
-| AI-05 | Phase 3 | Pending | |
+| AI-05 | Phase 3 | Complete | |
 | FE-01 | Phase 2 | Complete | |
 | FE-02 | Phase 2 | Complete | |
 | FE-03 | Phase 3 | Pending | |
 | FE-04 | Phase 5 | Complete | |
 | FE-05 | Phase 2 | Complete | |
-| AUTH-01 | Phase 3 | Pending | |
+| AUTH-01 | Phase 3 | Complete | |
 | AUTH-02 | Phase 3 | Pending | |
-| AUTH-03 | Phase 3 | Pending | |
-| AUTH-04 | Phase 3 | Pending | |
+| AUTH-03 | Phase 3 | Complete | |
+| AUTH-04 | Phase 3 | Complete | |
 | RATE-01 | Phase 4 | Pending | |
 | RATE-02 | Phase 4 | Pending | |
 | RATE-03 | Phase 4 | Pending | |

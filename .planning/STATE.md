@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-02-27T08:21:33.278Z"
+progress:
+  total_phases: 4
+  completed_phases: 3
+  total_plans: 23
+  completed_plans: 21
+---
+
 # Project State
 
 ## Project Reference
@@ -10,9 +23,9 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 ## Current Position
 
 Phase: 3 of 5 (Auth + Persistence)
-Plan: 1 of N in current phase — Plan 01 complete (Clerk install + auth guard)
-Status: Phase 3 in progress — Plan 01 executed; Clerk installed, proxy.ts auth guard active
-Last activity: 2026-02-27 — Phase 3 Plan 01 complete: @clerk/nextjs installed, proxy.ts created, ClerkProvider in layout, CSP updated
+Plan: 4 of 6 in current phase — Plan 04 complete (graph ownership + Supabase persistence)
+Status: Phase 3 in progress — Plans 01-04 executed; Plans 05-06 remaining
+Last activity: 2026-02-27 — Phase 3 Plan 04 complete: Neo4j created_by field, Supabase graphs table save, request_log fire-and-forget
 
 Progress: [██████░░░░] 60%
 
@@ -46,6 +59,8 @@ Progress: [██████░░░░] 60%
 | 05-landing-page-observability | P05 | 1 min | 1 | 1 |
 | Phase 05-landing-page-observability P06 | 5 | 2 tasks | 1 files |
 | 03-auth-persistence | P01 | 2 min | 2 | 5 |
+| Phase 03-auth-persistence P04 | 3 | 2 tasks | 3 files |
+| Phase 03-auth-persistence PP03 | 2 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -94,6 +109,11 @@ Recent decisions affecting current work:
 - [03-01]: ClerkProvider wraps outside <html> element — required placement for Clerk context in Server Components
 - [03-01]: NEXT_PUBLIC_CLERK_FRONTEND_API in CSP as env var — handles dev (clerk.accounts.dev) and prod (clerk.your-domain.com) without code changes
 - [03-01]: pnpm --filter web from monorepo root required for add — cd apps/web && pnpm add fails with ERR_PNPM_WORKSPACE_PKG_NOT_FOUND for @graphvc/shared-types@workspace:*
+- [Phase 03-auth-persistence]: user_id default 'anonymous' — persist_graph works for both authed and trial users without branching
+- [Phase 03-auth-persistence]: Fire-and-forget pattern: all Supabase writes in try/except pass blocks — Supabase failure never blocks Neo4j response
+- [Phase 03-auth-persistence]: Auto-title: URL inputs use domain+date ('techcrunch.com · Feb 27'), text inputs use first 60 chars with ellipsis
+- [Phase 03-auth-persistence]: Clerk catch-all slug [[...sign-in]] required — /sign-in/sso-callback 404s without it
+- [Phase 03-auth-persistence]: getToken parameter optional in generateGraph — preserves backward compatibility for anonymous callers
 
 ### Pending Todos
 
@@ -109,5 +129,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Phase 3 Plan 01 complete — @clerk/nextjs installed, proxy.ts auth guard created, ClerkProvider in layout, CSP updated for Clerk domains
+Stopped at: Phase 3 Plan 04 complete — Neo4j created_by ownership (AI-05), Supabase graphs table (AUTH-03), request_log fire-and-forget (AUTH-04) wired into generate pipeline
 Resume file: None
