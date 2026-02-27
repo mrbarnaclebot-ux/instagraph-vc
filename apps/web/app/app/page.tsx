@@ -10,6 +10,7 @@ import LoadingSteps from '@/components/input/LoadingSteps'
 import DetailPanel from '@/components/graph/DetailPanel'
 import { generateGraph, GraphAPIError } from '@/lib/api'
 import { captureGraphGenerated } from '@/lib/analytics'
+import { exportGraphAsJson } from '@/lib/export'
 import type { VCGraph } from '@graphvc/shared-types'
 
 // CRITICAL: ssr:false required — react-cytoscapejs accesses window at module load time
@@ -153,6 +154,10 @@ function AppPageInner() {
     setSelectedNodeId(nodeId)
   }, [])
 
+  const handleExportJson = useCallback(() => {
+    if (graph) exportGraphAsJson(graph)
+  }, [graph])
+
   return (
     <div className="flex flex-col h-screen bg-gray-950 overflow-hidden">
       {/* Input area: hero card (idle) or collapsed bar (loading/success) */}
@@ -251,6 +256,7 @@ function AppPageInner() {
                 graph={graph}
                 selectedNodeId={selectedNodeId}
                 onNodeClick={handleNodeClick}
+                onExportJson={handleExportJson}
               />
             </div>
             {selectedNodeId && (

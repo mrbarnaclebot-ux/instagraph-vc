@@ -1,6 +1,7 @@
 'use client'
 
 import * as Tabs from '@radix-ui/react-tabs'
+import Link from 'next/link'
 import { useState, useRef } from 'react'
 
 const MIN_TEXT_LENGTH = 200
@@ -41,6 +42,12 @@ export default function InputCard({ collapsed, disabled, onSubmit, onExpand }: I
           {isUrl ? 'URL' : 'TXT'}
         </span>
         <span className="font-mono text-sm text-gray-400 truncate flex-1 min-w-0">{currentInput}</span>
+        <Link
+          href="/app/history"
+          className="shrink-0 text-xs text-gray-500 hover:text-gray-300 px-2 py-1.5 transition-colors font-medium"
+        >
+          History
+        </Link>
         <button
           onClick={(e) => { e.stopPropagation(); onExpand() }}
           className="shrink-0 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-3 py-1.5 rounded-full transition-all font-medium border border-gray-700 hover:border-gray-600"
@@ -66,9 +73,17 @@ export default function InputCard({ collapsed, disabled, onSubmit, onExpand }: I
         <div className="relative bg-gray-900/90 backdrop-blur-sm border border-gray-800/80 rounded-2xl shadow-2xl shadow-indigo-950/30 overflow-hidden">
           {/* Header */}
           <div className="px-5 pt-5 pb-3">
-            <h1 className="font-display text-lg font-bold text-white tracking-tight">
-              Generate Graph
-            </h1>
+            <div className="flex items-center justify-between">
+              <h1 className="font-display text-lg font-bold text-white tracking-tight">
+                Generate Graph
+              </h1>
+              <Link
+                href="/app/history"
+                className="text-xs text-gray-500 hover:text-gray-300 transition-colors font-medium"
+              >
+                History
+              </Link>
+            </div>
             <p className="text-xs text-gray-500 mt-0.5">
               Paste a URL or text about a crypto VC deal
             </p>

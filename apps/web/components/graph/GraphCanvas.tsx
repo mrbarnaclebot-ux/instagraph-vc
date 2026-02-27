@@ -5,6 +5,7 @@ import Cytoscape from 'cytoscape'
 import fcose from 'cytoscape-fcose'
 import { useRef, useCallback, useEffect } from 'react'
 import { cytoscapeStylesheet } from './cytoscapeStyles'
+import { exportGraphAsPng } from '@/lib/export'
 import type { VCGraph } from '@graphvc/shared-types'
 
 // Register fcose layout once at module level — NOT inside component (would re-register on every render)
@@ -14,9 +15,10 @@ interface GraphCanvasProps {
   graph: VCGraph
   selectedNodeId: string | null
   onNodeClick: (nodeId: string | null) => void
+  onExportJson?: () => void
 }
 
-export default function GraphCanvas({ graph, selectedNodeId, onNodeClick }: GraphCanvasProps) {
+export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onExportJson }: GraphCanvasProps) {
   const cyRef = useRef<Cytoscape.Core | null>(null)
 
   // When selectedNodeId changes externally (e.g., from detail panel navigation), sync highlight
@@ -69,6 +71,10 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick }: Grap
     cyRef.current?.fit(undefined, 40)
   }
 
+  const handleExportPng = () => {
+    if (cyRef.current) exportGraphAsPng(cyRef.current)
+  }
+
   return (
     <div className="relative w-full h-full bg-gray-950">
       {/* Subtle dot grid background */}
@@ -111,17 +117,43 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick }: Grap
         ))}
       </div>
 
-      {/* Fit button — bottom-right */}
-      <button
-        onClick={handleFit}
-        title="Fit graph to viewport"
-        className="absolute bottom-4 right-4 z-10 bg-gray-900/70 backdrop-blur-sm hover:bg-gray-800/80 border border-gray-800/50 hover:border-gray-700/60 text-gray-400 hover:text-white rounded-lg px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
-      >
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-          <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
-        </svg>
-        Fit
-      </button>
+      {/* Toolbar — bottom-right */}
+      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-px bg-gray-900/70 backdrop-blur-sm border border-gray-800/50 rounded-lg overflow-hidden">
+        {onExportJson && (
+          <button
+            onClick={onExportJson}
+            title="Export as JSON"
+            className="hover:bg-gray-800/80 text-gray-400 hover:text-white px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 1v3a1 1 0 0 1-1 1H1M13 15V5l-4-4H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1z" />
+            </svg>
+            JSON
+          </button>
+        )}
+        <button
+          onClick={handleExportPng}
+          title="Export as PNG"
+          className="hover:bg-gray-800/80 text-gray-400 hover:text-white px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="1" y="1" width="14" height="14" rx="2" />
+            <circle cx="5" cy="5.5" r="1.5" />
+            <path d="M15 10l-3.5-3.5L4 14h10a1 1 0 0 0 1-1v-3z" />
+          </svg>
+          PNG
+        </button>
+        <button
+          onClick={handleFit}
+          title="Fit graph to viewport"
+          className="hover:bg-gray-800/80 text-gray-400 hover:text-white px-3 py-2 text-xs font-medium transition-all flex items-center gap-1.5"
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+          </svg>
+          Fit
+        </button>
+      </div>
     </div>
   )
 }
