@@ -2,7 +2,8 @@ import time
 from fastapi import APIRouter, Depends, Request
 from neo4j import Driver
 
-from app.dependencies import get_current_user, get_optional_user, get_neo4j_driver, get_supabase_client
+from app.dependencies import get_current_user, get_optional_user, get_neo4j_driver, get_supabase_client, get_redis_client
+from app.ratelimit.limiter import check_rate_limit
 from app.generate.schemas import GenerateRequest, GenerateResponse
 from app.generate.service import run_generate_pipeline
 from app.graph.repository import get_graph_by_session
@@ -17,6 +18,7 @@ async def generate(
     current_user: dict | None = Depends(get_optional_user),
     driver: Driver = Depends(get_neo4j_driver),
     supabase=Depends(get_supabase_client),
+    redis=Depends(get_redis_client),
 ) -> GenerateResponse:
     """
     Generate a VC knowledge graph from text or URL input (AI-01, AI-02, AI-03).
@@ -46,11 +48,21 @@ async def generate(
     start = time.time()
     user_id = current_user.get("sub", "anonymous") if current_user else "anonymous"
 
+    # BYOK: if user provides their own OpenAI API key, bypass rate limit (RATE-01)
+    openai_key = request.headers.get("x-openai-key")
+    if not openai_key:
+        # Check per-user daily rate limit (RATE-01)
+        ip = request.client.host if request.client else "127.0.0.1"
+        check_rate_limit(redis, user_id, ip)
+
     result = run_generate_pipeline(
         raw_input=body.input,
         driver=driver,
         user_id=user_id,
         supabase=supabase,
+        redis=redis,
+        openai_api_key=openai_key,
+        force_refresh=body.force_refresh,
     )
 
     processing_ms = int((time.time() - start) * 1000)

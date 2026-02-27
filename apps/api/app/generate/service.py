@@ -10,6 +10,7 @@ from app.generate.prompts import SYSTEM_PROMPT
 from app.scraper.scraper import scrape_url
 from app.scraper.ssrf import validate_input_length
 from app.graph.repository import persist_graph
+from app.ratelimit.cache import get_cached_scrape, cache_scrape
 
 # OpenAI client — module-level singleton (one instance per worker process)
 _openai_client: OpenAI | None = None
@@ -42,6 +43,9 @@ def run_generate_pipeline(
     driver,
     user_id: str = "anonymous",    # AI-05: graph ownership
     supabase=None,                  # AUTH-03/04: pass app.state.supabase or None
+    redis=None,                     # RATE-03: URL scrape cache
+    openai_api_key: str | None = None,  # BYOK: user-provided OpenAI key
+    force_refresh: bool = False,    # CONTEXT.md: bypass URL cache
 ) -> dict:
     """
     Full generate pipeline (AI-01, AI-02, AI-03, AI-04, AI-05).
@@ -68,11 +72,23 @@ def run_generate_pipeline(
     # Text inputs: everything else
     session_id = str(uuid.uuid4())
 
+    cache_hit = False
+    cache_age_seconds = None
+
     if raw_input.strip().startswith("https://"):
         source_type = "url"
-        # For URL inputs, length check is skipped — the URL itself is short but the
-        # scraped content will be validated by scrape_url() (>500 char minimum yield).
-        content = scrape_url(raw_input.strip())
+        # RATE-03: Check URL cache before scraping (Phase 4)
+        if not force_refresh:
+            cached_text, cache_age = get_cached_scrape(redis, raw_input.strip())
+            if cached_text is not None:
+                content = cached_text
+                cache_hit = True
+                cache_age_seconds = cache_age
+        if not cache_hit:
+            # For URL inputs, length check is skipped — the URL itself is short but the
+            # scraped content will be validated by scrape_url() (>500 char minimum yield).
+            content = scrape_url(raw_input.strip())
+            cache_scrape(redis, raw_input.strip(), content)
     else:
         source_type = "text"
         # AI-04: Reject text inputs shorter than 200 characters.
@@ -84,7 +100,11 @@ def run_generate_pipeline(
     # AI-01: GPT-4o structured extraction via native structured outputs
     # client.beta.chat.completions.parse() guarantees VCKnowledgeGraph schema
     # No manual JSON repair needed — native structured outputs handles it
-    client = _get_openai_client()
+    # BYOK: if user provides their own key, use a transient client (never stored/logged)
+    if openai_api_key:
+        client = OpenAI(api_key=openai_api_key)
+    else:
+        client = _get_openai_client()
     try:
         response = client.beta.chat.completions.parse(
             model="gpt-4o",
@@ -160,5 +180,7 @@ def run_generate_pipeline(
             "token_count": token_count,
             "source_type": source_type,
             "processing_ms": processing_ms,
+            "cache_hit": cache_hit,
+            "cache_age_seconds": cache_age_seconds,
         },
     }

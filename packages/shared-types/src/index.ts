@@ -34,6 +34,8 @@ export interface GenerateMeta {
   token_count: number
   source_type: "url" | "text"
   processing_ms: number
+  cache_hit: boolean
+  cache_age_seconds: number | null
 }
 
 export interface GenerateResponse {

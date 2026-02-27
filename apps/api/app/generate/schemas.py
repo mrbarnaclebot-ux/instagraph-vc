@@ -87,6 +87,7 @@ class GenerateRequest(BaseModel):
             "URL inputs are scraped; text inputs go directly to GPT-4o (AI-03)."
         )
     )
+    force_refresh: bool = False  # CONTEXT.md: bypass URL cache, counts as generation
     # Note: min_length validation is done in the service/route via validate_input_length()
     # (from ssrf.py Plan 02) to produce our custom error shape, not Pydantic's 422.
 
@@ -96,6 +97,8 @@ class GenerateMeta(BaseModel):
     token_count: int
     source_type: Literal["url", "text"]
     processing_ms: int
+    cache_hit: bool = False
+    cache_age_seconds: int | None = None
 
 
 class GenerateResponse(BaseModel):
