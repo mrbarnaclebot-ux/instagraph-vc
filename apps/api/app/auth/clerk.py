@@ -105,3 +105,13 @@ async def get_current_user(
             status_code=401,
             detail={"error": "unauthorized", "message": "Token verification failed"},
         )
+
+
+async def get_optional_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(_bearer),
+) -> dict | None:
+    """Like get_current_user but returns None instead of 401 for anonymous access."""
+    if credentials is None:
+        return None
+    # If a token IS provided, validate it normally
+    return await get_current_user(credentials)

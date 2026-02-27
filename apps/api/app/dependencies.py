@@ -2,7 +2,7 @@ from fastapi import Request
 from neo4j import Driver
 from supabase import Client
 
-from app.auth.clerk import get_current_user  # noqa: F401 — re-exported for routers
+from app.auth.clerk import get_current_user, get_optional_user  # noqa: F401 — re-exported for routers
 
 
 def get_neo4j_driver(request: Request) -> Driver:

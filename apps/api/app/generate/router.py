@@ -2,7 +2,7 @@ import time
 from fastapi import APIRouter, Depends, Request
 from neo4j import Driver
 
-from app.dependencies import get_current_user, get_neo4j_driver, get_supabase_client
+from app.dependencies import get_current_user, get_optional_user, get_neo4j_driver, get_supabase_client
 from app.generate.schemas import GenerateRequest, GenerateResponse
 from app.generate.service import run_generate_pipeline
 from app.graph.repository import get_graph_by_session
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api", tags=["generate"])
 async def generate(
     request: Request,
     body: GenerateRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict | None = Depends(get_optional_user),
     driver: Driver = Depends(get_neo4j_driver),
     supabase=Depends(get_supabase_client),
 ) -> GenerateResponse:
@@ -24,8 +24,8 @@ async def generate(
     AI-05: Passes user_id for graph ownership in Neo4j.
     AUTH-03: run_generate_pipeline saves graph metadata to Supabase graphs table.
 
-    Authentication: Requires valid Clerk JWT Bearer token (SEC-03).
-    Rejected immediately with 401 if token is missing or invalid.
+    Authentication: Optional — anonymous users can generate trial graphs.
+    Authenticated users get their Clerk user_id for graph ownership.
 
     Request body: {"input": "text or https://url"}
 
@@ -44,7 +44,7 @@ async def generate(
     }
     """
     start = time.time()
-    user_id = current_user.get("sub", "anonymous")
+    user_id = current_user.get("sub", "anonymous") if current_user else "anonymous"
 
     result = run_generate_pipeline(
         raw_input=body.input,
