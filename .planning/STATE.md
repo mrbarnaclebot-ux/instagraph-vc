@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T12:28:53.624Z"
+last_updated: "2026-02-27T13:12:45.374Z"
 progress:
   total_phases: 4
   completed_phases: 4
-  total_plans: 24
-  completed_plans: 24
+  total_plans: 25
+  completed_plans: 25
 ---
 
 # Project State
@@ -64,6 +64,7 @@ Progress: [████████░░] 70%
 | 03-auth-persistence | P05 | 2 min | 2 | 8 |
 | Phase 03-auth-persistence P06 | 1 | 0 tasks | 0 files |
 | Phase 01-backend-foundation P06 | 2 | 2 tasks | 3 files |
+| Phase 01-backend-foundation PP07 | 1 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,7 @@ Recent decisions affecting current work:
 - [03-05]: Async params required in Next.js 15+ dynamic Route Handlers — always await params before destructuring
 - [Phase 01-06]: MIN_TEXT_LENGTH = 200 matches backend validate_input_length() threshold
 - [Phase 01-06]: 503 override only triggers when detail.message is generic 'HTTP 503' -- preserves real application 503s
+- [Phase 01-07]: headers as real dict (not mock return_value) -- .get() works naturally, future bracket access won't break
 
 ### Pending Todos
 
@@ -138,5 +140,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 01-06-PLAN.md (UAT gap closure: client-side validation + 503 error messages)
+Stopped at: Completed 01-07-PLAN.md (test mock Content-Type fix: 29/29 tests green)
 Resume file: None
