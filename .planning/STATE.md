@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-02-27T16:53:10.066Z"
+last_updated: "2026-02-27T16:58:26Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 28
-  completed_plans: 27
+  completed_plans: 28
 ---
 
 # Project State
@@ -22,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 4 of 5 (Guardrails + Export)
-Plan: 2 of 3 in current phase — 04-02 (Export + Rate Limiting) complete
-Status: Executing Phase 4. Plans 04-01 and 04-02 complete. 04-03 remaining.
-Last activity: 2026-02-27 — Completed 04-02: ExportFAB + Edge IP rate limiting
+Phase: 4 of 5 (Guardrails + Export) -- COMPLETE
+Plan: 3 of 3 in current phase — 04-03 (Frontend Rate Limiting UX) complete
+Status: Phase 4 complete. All 3 plans (04-01, 04-02, 04-03) executed.
+Last activity: 2026-02-27 — Completed 04-03: Frontend rate limiting UX (UsageCounter, ApiKeyModal, CachedIndicator)
 
-Progress: [█████████░] 85%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [█████████░] 85%
 | Phase 01-backend-foundation PP07 | 1 | 1 tasks | 2 files |
 | Phase 04-guardrails-export PP01 | 10 min | 2 tasks | 12 files |
 | Phase 04-guardrails-export PP02 | 3 | 3 tasks | 7 files |
+| 04-guardrails-export | P03 | 3 min | 2 | 7 |
 
 ## Accumulated Context
 
@@ -129,6 +130,10 @@ Recent decisions affecting current work:
 - [Phase 01-07]: headers as real dict (not mock return_value) -- .get() works naturally, future bracket access won't break
 - [Phase 04-guardrails-export]: get_remaining/get_reset SDK methods for usage peek (upstash-ratelimit 1.1.0 Python)
 - [Phase 04-guardrails-export]: BYOK creates transient OpenAI client per request -- never stored as singleton, never logged
+- [Phase 04-03]: ApiKeyModal is conversion-moment overlay (not settings page) -- triggered by 429 error, matching CONTEXT.md guidance
+- [Phase 04-03]: UsageCounter and CachedIndicator rendered in shared bar below InputCard for persistent visibility
+- [Phase 04-03]: HeroSection 429 reuses existing TrialModal (sign-up prompt) -- appropriate for anonymous landing page users
+- [Phase 04-03]: Force-refresh pattern: callback re-submits last input with { forceRefresh: true } option
 
 ### Pending Todos
 
@@ -144,5 +149,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-27
-Stopped at: Completed 04-02-PLAN.md (ExportFAB + Edge IP rate limiting)
+Stopped at: Completed 04-03-PLAN.md (Frontend rate limiting UX) -- Phase 04 complete
 Resume file: None
