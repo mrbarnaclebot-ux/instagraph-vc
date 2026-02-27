@@ -13,9 +13,9 @@ GraphVC is built in five phases that follow the natural dependency chain of the 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Backend Foundation** - FastAPI service with VC-specific AI pipeline, SSRF-hardened scraper, and all security primitives in place (completed 2026-02-25)
-- [x] **Phase 2: Monorepo + Vertical Slice** - Turborepo scaffold, Next.js BFF, and working Cytoscape UI proving the full input-to-graph flow (completed 2026-02-26)
-- [x] **Phase 3: Auth + Persistence** - Clerk authentication, per-user graph ownership, Supabase metadata, and graph history (completed 2026-02-27)
-- [ ] **Phase 4: Guardrails + Export** - Rate limiting with user feedback, Redis URL caching, JSON and PNG export
+- [x] **Phase 2: Monorepo + Vertical Slice** - Turborepo scaffold, Next.js BFF, and working Cytoscape UI proving the full input-to-graph flow (completed 2026-02-26, UAT 8/8 passed 2026-02-27)
+- [x] **Phase 3: Auth + Persistence** - Clerk authentication, per-user graph ownership, Supabase metadata, and graph history (completed 2026-02-27, UAT 8/8 passed 2026-02-27)
+- [ ] **Phase 4: Guardrails + Export** - Rate limiting with user feedback, Redis URL caching, JSON and PNG export (planned, not yet executed)
 - [x] **Phase 5: Landing Page + Observability** - Public marketing surface, security headers, Sentry error tracking, and PostHog analytics (gap closure in progress) (completed 2026-02-26)
 
 ## Phase Details
@@ -74,11 +74,11 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — Clerk install + proxy.ts auth guard + ClerkProvider in layout + CSP update for Clerk domains
-- [ ] 03-02-PLAN.md — Supabase backend singleton (FastAPI config/lifespan/dep) + webhook Route Handler + SQL schema
-- [ ] 03-03-PLAN.md — Sign-in/sign-up Clerk pages (catch-all routes) + Bearer token wiring in api.ts + app/page.tsx
-- [ ] 03-04-PLAN.md — Neo4j created_by (AI-05) + service/router user_id wiring + Supabase graphs + request_log
-- [ ] 03-05-PLAN.md — Graph history page (/app/history) + history API Route Handlers + anonymous trial modal
-- [ ] 03-06-PLAN.md — Human verification checkpoint: full auth flow, history, trial modal
+- [x] 03-02-PLAN.md — Supabase backend singleton (FastAPI config/lifespan/dep) + webhook Route Handler + SQL schema
+- [x] 03-03-PLAN.md — Sign-in/sign-up Clerk pages (catch-all routes) + Bearer token wiring in api.ts + app/page.tsx
+- [x] 03-04-PLAN.md — Neo4j created_by (AI-05) + service/router user_id wiring + Supabase graphs + request_log
+- [x] 03-05-PLAN.md — Graph history page (/app/history) + history API Route Handlers + anonymous trial modal
+- [x] 03-06-PLAN.md — Human verification checkpoint: full auth flow, history, trial modal
 
 ### Phase 4: Guardrails + Export
 **Goal**: The application handles load safely — rate limits protect AI costs, Redis caching reduces duplicate scrapes, and users can export graphs as JSON or PNG for use in reports
@@ -121,13 +121,13 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Backend Foundation | 6/7 | Gap closure planned | 2026-02-25 |
-| 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
-| 3. Auth + Persistence | 6/6 | Complete   | 2026-02-27 |
-| 4. Guardrails + Export | 0/TBD | Not started | - |
-| 5. Landing Page + Observability | 6/6 | Complete   | 2026-02-26 |
+| Phase | Plans Complete | Status | UAT | Completed |
+|-------|----------------|--------|-----|-----------|
+| 1. Backend Foundation | 6/7 | Gap closure planned | 7/10 passed (diagnosed) | 2026-02-25 |
+| 2. Monorepo + Vertical Slice | 6/6 | Complete | 8/8 passed | 2026-02-26 |
+| 3. Auth + Persistence | 6/6 | Complete | 8/8 passed | 2026-02-27 |
+| 4. Guardrails + Export | 0/3 | Planned, not executed | N/A | - |
+| 5. Landing Page + Observability | 6/6 | Complete | 5/6 passed (diagnosed) | 2026-02-26 |
 
 ---
 *Roadmap created: 2026-02-25*
@@ -137,3 +137,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 *Phase 3 planned: 2026-02-27 — 6 plans across 4 waves*
 *Phase 5 planned: 2026-02-26 — 4 plans across 2 waves + 2 gap closure plans (Wave 1)*
 *AI-02 note: scraping/extraction sub-requirement in Phase 1 (plan 01-03); Redis caching sub-requirement in Phase 4 (with RATE-03)*
+*UAT Phase 2: 2026-02-27 — 8/8 passed (edge label rendering quirk noted, not blocking)*
+*UAT Phase 3: 2026-02-27 — 8/8 passed*
+*UAT Phase 4: 2026-02-27 — skipped (not executed, plans only)*

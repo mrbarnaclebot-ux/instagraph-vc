@@ -5,8 +5,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from neo4j import GraphDatabase
 from supabase import create_client
+from upstash_redis import Redis
 from app.config import settings
 from app.generate.router import router as generate_router
+from app.ratelimit.router import router as ratelimit_router
 
 # Sentry must be initialized before app = FastAPI() — patches request handling at import time
 # Only init if DSN is configured (allows dev without Sentry credentials)
@@ -44,6 +46,12 @@ async def lifespan(app: FastAPI):
     else:
         app.state.supabase = None  # Graceful degradation when not configured
 
+    # Upstash Redis singleton (RATE-01, RATE-03, AI-02)
+    if settings.upstash_redis_rest_url and settings.upstash_redis_rest_token:
+        app.state.redis = Redis(url=settings.upstash_redis_rest_url, token=settings.upstash_redis_rest_token)
+    else:
+        app.state.redis = None  # Graceful degradation when not configured
+
     yield
     # Shutdown — always close in neo4j 5.x (mandatory in 6.x)
     app.state.neo4j_driver.close()
@@ -56,6 +64,7 @@ app = FastAPI(
 )
 
 app.include_router(generate_router)
+app.include_router(ratelimit_router)
 
 
 @app.get("/health")

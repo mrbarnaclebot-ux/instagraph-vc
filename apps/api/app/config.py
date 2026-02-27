@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     # Supabase (Phase 3 — AUTH-03, AUTH-04)
     supabase_url: str = ""
     supabase_key: str = ""  # sb_secret_... or service_role key (server-side only, never anon)
+    # Upstash Redis (Phase 4 — RATE-01, RATE-03, AI-02)
+    upstash_redis_rest_url: str = ""
+    upstash_redis_rest_token: str = ""
     # Observability (Phase 5)
     sentry_dsn: str = ""
     environment: str = "development"

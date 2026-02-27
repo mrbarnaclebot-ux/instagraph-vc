@@ -18,16 +18,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** Users can instantly generate and explore accurate visual maps of crypto VC relationships from any public funding announcement — without spreadsheets, manual research, or expensive tools.
-**Current focus:** Phase 3 — Auth + Persistence (awaiting human verification)
+**Current focus:** Phase 4 — Guardrails + Export (planned, not yet executed)
 
 ## Current Position
 
-Phase: 3 of 5 (Auth + Persistence)
-Plan: 6 of 6 in current phase — Plan 06 checkpoint reached (human verify: all Phase 3 auth and persistence flow)
-Status: Phase 3 checkpoint — all 6 plans executed; awaiting human sign-off on 6-scenario test matrix
-Last activity: 2026-02-27 — Phase 3 Plan 06 checkpoint: human verification of Google OAuth, /app/* guard, graph persistence, history page, anonymous trial modal
+Phase: 4 of 5 (Guardrails + Export)
+Plan: 0 of 3 in current phase — Phase planned but not yet executed
+Status: UAT complete for Phases 1-3 and 5. Phase 4 is next to execute.
+Last activity: 2026-02-27 — UAT Phases 2-3: all 16 tests passed. Phase 4 confirmed planned-only (no summaries).
 
-Progress: [████████░░] 70%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 

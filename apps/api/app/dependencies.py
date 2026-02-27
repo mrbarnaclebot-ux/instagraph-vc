@@ -15,6 +15,12 @@ def get_neo4j_driver(request: Request) -> Driver:
     return request.app.state.neo4j_driver
 
 
+def get_redis_client(request: Request):
+    """Returns the singleton Upstash Redis client from app.state (RATE-01, RATE-03).
+    Returns None if Upstash Redis is not configured."""
+    return getattr(request.app.state, "redis", None)
+
+
 def get_supabase_client(request: Request) -> Client | None:
     """Returns the singleton Supabase client from app.state (AUTH-03, AUTH-04).
     Returns None if Supabase is not configured (dev without credentials).
