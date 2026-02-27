@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. All Neo4j queries in the codebase use parameterised Cypher (`$param` syntax) — zero string interpolation; a code search for `.format(` and f-strings in files importing neo4j returns no results
   4. A request with an invalid or expired Clerk JWT is rejected with 401 before any business logic executes
   5. Backend rejects inputs shorter than 200 characters with a 400 and the message "Input too short — paste a full funding announcement or article for best results"
-**Plans**: 6 plans
+**Plans**: 7 plans
 
 Plans:
 - [x] 01-01-PLAN.md — Project scaffold: uv + FastAPI skeleton + Neo4j lifespan singleton + docker-compose
@@ -38,7 +38,8 @@ Plans:
 - [x] 01-03-PLAN.md — BeautifulSoup scraper (SSRF-aware) + parameterized Neo4j repository
 - [x] 01-04-PLAN.md — Clerk JWT auth dependency via PyJWT + PyJWKClient
 - [x] 01-05-PLAN.md — POST /api/generate endpoint: wires scraper + GPT-4o + Neo4j + auth
-- [ ] 01-06-PLAN.md — Gap closure: client-side 200-char text validation + friendly 503 error handling
+- [x] 01-06-PLAN.md — Gap closure: client-side 200-char text validation + friendly 503 error handling
+- [ ] 01-07-PLAN.md — Gap closure: fix 3 test regressions from stale Content-Type mocks in test_scraper.py and test_generate.py
 
 ### Phase 2: Monorepo + Vertical Slice
 **Goal**: The Turborepo monorepo is scaffolded with Next.js 15 and FastAPI co-located; a developer can submit a URL or text in the browser, watch the graph generate, and interact with a styled Cytoscape canvas — without authentication
@@ -117,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Backend Foundation | 5/6 | Gap closure planned | 2026-02-25 |
+| 1. Backend Foundation | 6/7 | Gap closure planned | 2026-02-25 |
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
 | 3. Auth + Persistence | 6/6 | Complete   | 2026-02-27 |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
@@ -127,6 +128,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 *Roadmap created: 2026-02-25*
 *Coverage: 27/27 v1 requirements mapped*
 *Phase 1 planned: 2026-02-25 — 5 plans across 3 waves + 1 gap closure plan (Wave 1)*
+*Phase 1 gap closure: 2026-02-27 — 1 additional gap closure plan (01-07) for test regression fix*
 *Phase 3 planned: 2026-02-27 — 6 plans across 4 waves*
 *Phase 5 planned: 2026-02-26 — 4 plans across 2 waves + 2 gap closure plans (Wave 1)*
 *AI-02 note: scraping/extraction sub-requirement in Phase 1 (plan 01-03); Redis caching sub-requirement in Phase 4 (with RATE-03)*
