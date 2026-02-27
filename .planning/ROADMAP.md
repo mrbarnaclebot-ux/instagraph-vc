@@ -68,7 +68,15 @@ Plans:
   3. User can search their history by title, click a past graph to reload it on the Cytoscape canvas, and delete a graph they own; they cannot access or delete another user's graphs
   4. Anonymous user generates one graph from the landing page; on a second attempt a sign-up prompt modal appears instead of generating
   5. Every API request is logged to the Supabase `request_log` table with user_id, endpoint, source_url, IP, status code, tokens used, and timestamp
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Clerk install + proxy.ts auth guard + ClerkProvider in layout + CSP update for Clerk domains
+- [ ] 03-02-PLAN.md — Supabase backend singleton (FastAPI config/lifespan/dep) + webhook Route Handler + SQL schema
+- [ ] 03-03-PLAN.md — Sign-in/sign-up Clerk pages (catch-all routes) + Bearer token wiring in api.ts + app/page.tsx
+- [ ] 03-04-PLAN.md — Neo4j created_by (AI-05) + service/router user_id wiring + Supabase graphs + request_log
+- [ ] 03-05-PLAN.md — Graph history page (/app/history) + history API Route Handlers + anonymous trial modal
+- [ ] 03-06-PLAN.md — Human verification checkpoint: full auth flow, history, trial modal
 
 ### Phase 4: Guardrails + Export
 **Goal**: The application handles load safely — rate limits protect AI costs, Redis caching reduces duplicate scrapes, and users can export graphs as JSON or PNG for use in reports
@@ -110,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Backend Foundation | 5/5 | Complete    | 2026-02-25 |
 | 2. Monorepo + Vertical Slice | 6/6 | Complete    | 2026-02-26 |
-| 3. Auth + Persistence | 0/TBD | Not started | - |
+| 3. Auth + Persistence | 0/6 | Not started | - |
 | 4. Guardrails + Export | 0/TBD | Not started | - |
 | 5. Landing Page + Observability | 6/6 | Complete   | 2026-02-26 |
 
@@ -118,5 +126,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 *Roadmap created: 2026-02-25*
 *Coverage: 27/27 v1 requirements mapped*
 *Phase 1 planned: 2026-02-25 — 5 plans across 3 waves*
+*Phase 3 planned: 2026-02-27 — 6 plans across 4 waves*
 *Phase 5 planned: 2026-02-26 — 4 plans across 2 waves + 2 gap closure plans (Wave 1)*
 *AI-02 note: scraping/extraction sub-requirement in Phase 1 (plan 01-03); Redis caching sub-requirement in Phase 4 (with RATE-03)*
