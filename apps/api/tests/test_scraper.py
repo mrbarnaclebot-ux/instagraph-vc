@@ -43,6 +43,7 @@ class TestScrapeUrl:
     def test_returns_extracted_text(self, mock_get, mock_validate):
         mock_response = MagicMock()
         mock_response.is_redirect = False
+        mock_response.headers = {"Content-Type": "text/html; charset=utf-8"}
         mock_response.text = (
             "<html><body><article><p>" + "Paradigm Capital led a $50M Series B. " * 20 + "</p></article></body></html>"
         )
@@ -58,6 +59,7 @@ class TestScrapeUrl:
     def test_rejects_low_content_page(self, mock_get, mock_validate):
         mock_response = MagicMock()
         mock_response.is_redirect = False
+        mock_response.headers = {"Content-Type": "text/html; charset=utf-8"}
         mock_response.text = "<html><body><p>Short.</p></body></html>"
         mock_response.raise_for_status.return_value = None
         mock_get.return_value = mock_response
@@ -72,6 +74,7 @@ class TestScrapeUrl:
     def test_uses_allow_redirects_false(self, mock_get, mock_validate):
         mock_response = MagicMock()
         mock_response.is_redirect = False
+        mock_response.headers = {"Content-Type": "text/html; charset=utf-8"}
         mock_response.text = "<html><body>" + "<p>Content. " * 100 + "</p></body></html>"
         mock_response.raise_for_status.return_value = None
         mock_get.return_value = mock_response

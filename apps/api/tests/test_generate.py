@@ -144,6 +144,7 @@ class TestGenerateEndpoint:
         # Mock the scraper
         mock_response = MagicMock()
         mock_response.is_redirect = False
+        mock_response.headers = {"Content-Type": "text/html; charset=utf-8"}
         mock_response.text = "<html><body>" + "<p>Paradigm Capital invested $50M in Uniswap. </p>" * 30 + "</body></html>"
         mock_response.raise_for_status.return_value = None
         mock_requests_get.return_value = mock_response
