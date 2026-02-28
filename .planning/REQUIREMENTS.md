@@ -46,14 +46,14 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Rate Limiting
 
-- [x] **RATE-01**: FastAPI enforces per-user daily limits via Upstash Redis sliding window: anonymous users=1 graph/day, free users=10 graphs/day; exceeding the limit returns `429` with `Retry-After` header and `{ "error": "rate_limited", "retry_after": N, "message": "Daily limit reached" }`
+- [x] **RATE-01**: FastAPI enforces per-user daily limits via Upstash Redis fixed window: anonymous users=1 graph/day, free users=3 graphs/day; exceeding the limit returns `429` with `Retry-After` header and `{ "error": "rate_limited", "retry_after": N, "message": "Daily limit reached" }`
 - [x] **RATE-02**: Vercel Edge middleware enforces 60 requests/minute per IP across all routes — returning `429` for IPs that exceed the threshold (brute force protection)
 - [x] **RATE-03**: Scraped URL content is cached in Upstash Redis for 1 hour (key: hash of normalised URL) so that multiple users requesting the same URL trigger only one outbound scrape
 
 ### Export
 
 - [x] **EXP-01**: User can click "Export JSON" to download the current graph's nodes and edges as a JSON file in the standard response format (same shape as `POST /api/generate` response)
-- [x] **EXP-02**: User can click "Export PNG" to capture the current Cytoscape canvas as a PNG image via `html-to-image`; the image is uploaded to Vercel Blob and a download link is returned to the user
+- [x] **EXP-02**: User can click "Export PNG" to capture the current Cytoscape canvas as a PNG image via Cytoscape's native `cy.png()` API; the image is downloaded directly in the browser as a PNG file
 
 ### Observability
 
