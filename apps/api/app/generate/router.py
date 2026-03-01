@@ -34,6 +34,9 @@ async def generate(
 
     # BYOK: if user provides their own OpenAI API key, bypass rate limit (RATE-01)
     openai_key = request.headers.get("x-openai-key")
+    # Validate BYOK key format to prevent rate limit bypass with junk values
+    if openai_key and not openai_key.startswith("sk-"):
+        openai_key = None
     if not openai_key:
         # Check per-user daily rate limit (RATE-01)
         ip = request.client.host if request.client else "127.0.0.1"

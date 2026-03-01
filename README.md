@@ -37,7 +37,7 @@ The core concept, the "text → AI extraction → graph visualization" loop, the
 | Backend | FastAPI (Python 3.12), UV package manager |
 | AI | OpenAI GPT-4o with native structured outputs |
 | Database | Neo4j Aura (cloud-hosted graph DB) |
-| Auth | Clerk (JWT-based, planned Phase 3) |
+| Auth | Clerk (JWT-based) |
 | Analytics | PostHog + Sentry |
 | Infra | Vercel (frontend), Railway (backend), GitHub Actions CI/CD |
 | Monorepo | Turborepo + pnpm workspaces |
@@ -154,30 +154,26 @@ instagraph-vc/
 ### Install
 
 ```bash
-git clone https://github.com/your-org/instagraph-vc.git
+git clone https://github.com/uziminhas/instagraph-vc.git
 cd instagraph-vc
 pnpm install
 ```
 
 ### Environment
 
-**`apps/api/.env`**
-```env
-OPENAI_API_KEY=sk-...
-NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
-NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=your-password
-CLERK_SECRET_KEY=sk_live_...         # optional — skip with DEV_SKIP_AUTH=true
-CLERK_AUTHORIZED_PARTY=http://localhost:3000
-CLERK_FRONTEND_API=accounts.example.com
-DEV_SKIP_AUTH=true                   # bypass Clerk JWT for local dev
-SENTRY_DSN=https://...@sentry.io/1  # optional
+Copy the example env files and fill in your values:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.local.example apps/web/.env.local
 ```
 
-**`apps/web/.env.local`**
-```env
-NEXT_PUBLIC_POSTHOG_KEY=phc_...      # optional
-```
+At minimum for local development, you need:
+- `OPENAI_API_KEY` — your OpenAI API key
+- Neo4j credentials (use `docker compose up` for a local instance)
+- `DEV_SKIP_AUTH=true` — bypasses Clerk JWT auth for local dev
+
+See `apps/api/.env.example` and `apps/web/.env.local.example` for all available options.
 
 ### Run
 

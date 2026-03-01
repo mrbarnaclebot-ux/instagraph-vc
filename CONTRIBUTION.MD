@@ -1,33 +1,51 @@
 ## Contributing
 
-Thank you for contributing to Instagraph 🌐!
+Thank you for contributing to Instagraph VC!
 
-Note for non-coders: you can sign up for the waitlist at [instagraph.ai](https://instagraph.ai).
+This is a Turborepo monorepo with:
+- **`apps/web`** — Next.js 16 frontend (TypeScript, React 19, Tailwind CSS)
+- **`apps/api`** — FastAPI backend (Python 3.12, UV package manager)
+- **`packages/shared-types`** — Shared TypeScript types
 
-| <p align="center">⚠️ ⚠️ All PRs should reflect earnest attempts at implementing a model yourself. ⚠️⚠️ </p> It is fine to reference others' code. It is not fine to blindly copy without attribution. When in doubt, please ask. |
-| --- |
+### Getting Started
 
-### General guidelines
-1. Please include a clear list of what you've done
-2. For pull requests, please make sure all commits are [*atomic*](https://en.wikipedia.org/wiki/Atomic_commit) (i.e., one feature per commit)
-3. If you're submitting a new model / feature / module, **please include proper documentation.**
-4. Please format your code using the [black](https://github.com/python/black) defaults. You can use this [online formatter](https://black.now.sh/).
-5. Create a new branch before commiting the code.
-6. If someone create a issues then other are not allow to directly make a PR request on that issue. Ask for the permission to work on that issue.
-7. Do not push mutliple file in a one issue until and unless they are interrelated.
+```bash
+# Clone and install
+git clone https://github.com/uziminhas/instagraph-vc.git
+cd instagraph-vc
+pnpm install
 
-### Specific guidelines
-#### I have a new feature / component to contribute
- Awesome - create a [pull request](https://github.com/yoheinakajima/instagraph/pulls)! When preparing your PR, please include a brief description of the model, the canonical reference(s) in the literature.
+# Set up environment
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.local.example apps/web/.env.local
+# Edit both files with your API keys
 
-#### I have a major new enhancement / adjustment that will affect multiple models
- Please post an [issue](https://github.com/yoheinakajima/instagraph/issues) with your proposal before you begin working on it. When outlining your proposal, please include as much detail about your intended changes as possible.
+# Start local services (Neo4j + Redis)
+docker compose up -d
 
-#### I found a bug
- If there isn't already an [open issue](https://github.com/yoheinakajima/instagraph/issues), please start one! When creating your issue, include:
-  1. A title and clear description
-  2. As much relevant information as possible
-  3. A code sample demonstrating the expected behavior that is not occurring
+# Run development servers
+pnpm dev
+```
 
-#### I fixed a bug
- Thank you! Please open a new [pull request](https://github.com/yoheinakajima/instagraph/pulls) with the patch. When doing so, ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
+### Guidelines
+
+1. **Create a branch** before making changes
+2. Keep commits [atomic](https://en.wikipedia.org/wiki/Atomic_commit) — one feature per commit
+3. Include a clear description of what you changed and why
+4. Run tests before submitting:
+   ```bash
+   cd apps/api && uv run pytest   # Backend tests
+   pnpm lint                       # Frontend linting
+   ```
+
+### Submitting Changes
+
+- **Bug fix**: Open a [pull request](https://github.com/uziminhas/instagraph-vc/pulls) with a clear description of the problem and fix
+- **New feature**: Open an [issue](https://github.com/uziminhas/instagraph-vc/issues) first to discuss the approach
+- **Found a bug**: Open an [issue](https://github.com/uziminhas/instagraph-vc/issues) with steps to reproduce
+
+### Code Style
+
+- **Python**: Follow existing patterns in the codebase
+- **TypeScript**: ESLint handles formatting — run `pnpm lint` to check
+- **Commits**: Use clear, descriptive commit messages

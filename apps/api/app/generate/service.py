@@ -2,7 +2,7 @@ import logging
 import time
 import uuid
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timezone
 from openai import OpenAI
 
 from app.config import settings
@@ -40,7 +40,8 @@ def _auto_title(raw_input: str) -> str:
     """
     if _is_url(raw_input):
         domain = urlparse(raw_input.strip()).netloc.removeprefix("www.")
-        date_str = datetime.now().strftime("%b %-d")  # e.g. "Feb 27"
+        now = datetime.now(timezone.utc)
+        date_str = f"{now.strftime('%b')} {now.day}"  # e.g. "Feb 27" (portable)
         return f"{domain} · {date_str}"
     else:
         text = raw_input.strip()
@@ -130,7 +131,13 @@ async def run_generate_pipeline(
             "message": "AI service unavailable — please try again",
         })
 
-    parsed: VCKnowledgeGraph = response.choices[0].message.parsed
+    parsed: VCKnowledgeGraph | None = response.choices[0].message.parsed
+    if parsed is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail={
+            "error": "invalid_request",
+            "message": "Could not extract a knowledge graph from this input — try a different article or more detailed text",
+        })
     token_count: int = response.usage.total_tokens
 
     # Serialize to dicts for Neo4j persistence and response

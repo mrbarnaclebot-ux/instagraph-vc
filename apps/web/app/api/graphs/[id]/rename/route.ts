@@ -2,8 +2,6 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdmin } from '@/lib/supabase'
 
-const supabase = createSupabaseAdmin()
-
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,15 +18,25 @@ export async function PATCH(
     return NextResponse.json({ error: 'Title cannot be empty' }, { status: 400 })
   }
 
-  const { error } = await supabase
-    .from('graphs')
-    .update({ title: title.trim() })
-    .eq('id', id)
-    .eq('user_id', userId)  // Ownership check
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  if (title.trim().length > 200) {
+    return NextResponse.json({ error: 'Title is too long (max 200 characters)' }, { status: 400 })
   }
 
-  return NextResponse.json({ success: true })
+  try {
+    const supabase = createSupabaseAdmin()
+
+    const { error } = await supabase
+      .from('graphs')
+      .update({ title: title.trim() })
+      .eq('id', id)
+      .eq('user_id', userId)  // Ownership check
+
+    if (error) {
+      return NextResponse.json({ error: 'Failed to rename graph' }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+  }
 }

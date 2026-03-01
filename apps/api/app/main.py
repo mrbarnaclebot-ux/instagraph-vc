@@ -16,7 +16,7 @@ if settings.sentry_dsn:
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
         traces_sample_rate=0.1,
-        send_default_pii=True,
+        send_default_pii=False,
         environment=settings.environment,
         integrations=[
             StarletteIntegration(),
@@ -74,9 +74,15 @@ app.include_router(ratelimit_router)
 
 @app.get("/health")
 async def health():
+    from fastapi.responses import JSONResponse
     try:
         app.state.neo4j_driver.verify_connectivity()
         neo4j = "ok"
     except Exception:
         neo4j = "unavailable"
-    return {"status": "ok" if neo4j == "ok" else "degraded", "neo4j": neo4j}
+    status = "ok" if neo4j == "ok" else "degraded"
+    status_code = 200 if status == "ok" else 503
+    return JSONResponse(
+        content={"status": status, "neo4j": neo4j},
+        status_code=status_code,
+    )

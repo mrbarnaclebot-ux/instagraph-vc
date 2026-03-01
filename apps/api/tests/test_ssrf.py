@@ -1,7 +1,13 @@
+import socket
 import pytest
 from unittest.mock import patch
 from fastapi import HTTPException
 from app.scraper.ssrf import validate_url, validate_input_length
+
+
+def _mock_getaddrinfo(ip: str):
+    """Returns a mock getaddrinfo result for a given IP."""
+    return [(socket.AF_INET, socket.SOCK_STREAM, 0, '', (ip, 0))]
 
 
 class TestValidateUrl:
@@ -20,51 +26,59 @@ class TestValidateUrl:
             validate_url("https://")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="127.0.0.1")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("127.0.0.1"))
     def test_rejects_loopback_ip(self, mock_dns):
         with pytest.raises(HTTPException) as exc_info:
             validate_url("https://evil.com/path")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="10.0.0.1")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("10.0.0.1"))
     def test_rejects_rfc1918_10_block(self, mock_dns):
         with pytest.raises(HTTPException) as exc_info:
             validate_url("https://evil.com/path")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="10.255.255.255")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("10.255.255.255"))
     def test_rejects_rfc1918_10_block_upper(self, mock_dns):
         with pytest.raises(HTTPException) as exc_info:
             validate_url("https://evil.com/path")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="172.16.0.1")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("172.16.0.1"))
     def test_rejects_rfc1918_172_block(self, mock_dns):
         with pytest.raises(HTTPException) as exc_info:
             validate_url("https://evil.com/path")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="192.168.1.1")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("192.168.1.1"))
     def test_rejects_rfc1918_192_block(self, mock_dns):
         with pytest.raises(HTTPException) as exc_info:
             validate_url("https://evil.com/path")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="169.254.169.254")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("169.254.169.254"))
     def test_rejects_aws_metadata_endpoint(self, mock_dns):
         with pytest.raises(HTTPException) as exc_info:
             validate_url("https://evil.com/path")
         assert exc_info.value.status_code == 400
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="93.184.216.34")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("93.184.216.34"))
     def test_accepts_valid_public_url(self, mock_dns):
-        result = validate_url("https://example.com/article")
-        assert result == "https://example.com/article"
+        url, resolved_ip = validate_url("https://example.com/article")
+        assert url == "https://example.com/article"
+        assert resolved_ip == "93.184.216.34"
 
-    @patch("app.scraper.ssrf.socket.gethostbyname", return_value="104.18.20.100")
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("104.18.20.100"))
     def test_accepts_techcrunch_url(self, mock_dns):
-        result = validate_url("https://techcrunch.com/2024/01/01/funding")
-        assert result == "https://techcrunch.com/2024/01/01/funding"
+        url, resolved_ip = validate_url("https://techcrunch.com/2024/01/01/funding")
+        assert url == "https://techcrunch.com/2024/01/01/funding"
+        assert resolved_ip == "104.18.20.100"
+
+    @patch("app.scraper.ssrf.socket.getaddrinfo", return_value=_mock_getaddrinfo("100.64.0.1"))
+    def test_rejects_shared_address_space(self, mock_dns):
+        with pytest.raises(HTTPException) as exc_info:
+            validate_url("https://evil.com/path")
+        assert exc_info.value.status_code == 400
 
 
 class TestValidateInputLength:

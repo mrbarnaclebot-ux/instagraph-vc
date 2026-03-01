@@ -49,16 +49,16 @@ class TestExtractText:
 
 class TestScrapeUrl:
     @pytest.mark.asyncio
-    @patch("app.scraper.scraper.validate_url")
+    @patch("app.scraper.scraper.validate_url", return_value=("https://techcrunch.com/article", "104.18.20.100"))
     async def test_returns_extracted_text(self, mock_validate):
         import httpx
 
         mock_response = MagicMock(spec=httpx.Response)
         mock_response.is_redirect = False
         mock_response.headers = {"content-type": "text/html; charset=utf-8"}
-        mock_response.text = (
-            "<html><body><article><p>" + "Paradigm Capital led a $50M Series B. " * 20 + "</p></article></body></html>"
-        )
+        html = "<html><body><article><p>" + "Paradigm Capital led a $50M Series B. " * 20 + "</p></article></body></html>"
+        mock_response.text = html
+        mock_response.content = html.encode()
         mock_response.raise_for_status.return_value = None
 
         with patch("app.scraper.scraper.httpx.AsyncClient") as mock_client_cls:
@@ -73,14 +73,16 @@ class TestScrapeUrl:
             mock_validate.assert_called_once_with("https://techcrunch.com/article")
 
     @pytest.mark.asyncio
-    @patch("app.scraper.scraper.validate_url")
+    @patch("app.scraper.scraper.validate_url", return_value=("https://paywalled.com/article", "1.2.3.4"))
     async def test_rejects_low_content_page(self, mock_validate):
         import httpx
 
         mock_response = MagicMock(spec=httpx.Response)
         mock_response.is_redirect = False
         mock_response.headers = {"content-type": "text/html; charset=utf-8"}
-        mock_response.text = "<html><body><p>Short.</p></body></html>"
+        html = "<html><body><p>Short.</p></body></html>"
+        mock_response.text = html
+        mock_response.content = html.encode()
         mock_response.raise_for_status.return_value = None
 
         with patch("app.scraper.scraper.httpx.AsyncClient") as mock_client_cls:
@@ -96,14 +98,16 @@ class TestScrapeUrl:
             assert exc_info.value.detail["error"] == "scrape_failed"
 
     @pytest.mark.asyncio
-    @patch("app.scraper.scraper.validate_url")
+    @patch("app.scraper.scraper.validate_url", return_value=("https://example.com/article", "93.184.216.34"))
     async def test_uses_follow_redirects_false(self, mock_validate):
         import httpx
 
         mock_response = MagicMock(spec=httpx.Response)
         mock_response.is_redirect = False
         mock_response.headers = {"content-type": "text/html; charset=utf-8"}
-        mock_response.text = "<html><body>" + "<p>Content. " * 100 + "</p></body></html>"
+        html = "<html><body>" + "<p>Content. " * 100 + "</p></body></html>"
+        mock_response.text = html
+        mock_response.content = html.encode()
         mock_response.raise_for_status.return_value = None
 
         with patch("app.scraper.scraper.httpx.AsyncClient") as mock_client_cls:
@@ -119,7 +123,7 @@ class TestScrapeUrl:
             assert call_kwargs.get("follow_redirects") is False
 
     @pytest.mark.asyncio
-    @patch("app.scraper.scraper.validate_url")
+    @patch("app.scraper.scraper.validate_url", return_value=("https://slow-site.com/article", "1.2.3.4"))
     async def test_timeout_returns_503(self, mock_validate):
         import httpx
 

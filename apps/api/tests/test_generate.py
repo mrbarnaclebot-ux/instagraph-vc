@@ -141,7 +141,7 @@ class TestGenerateEndpoint:
         assert "paste a full funding announcement" in detail["message"]
 
     @patch("app.generate.service._get_openai_client")
-    @patch("app.scraper.scraper.validate_url")
+    @patch("app.scraper.scraper.validate_url", return_value=("https://techcrunch.com/article", "104.18.20.100"))
     def test_generate_url_input_scrapes_and_extracts(
         self, mock_validate, mock_openai_factory, app_with_mocks, valid_jwt_user
     ):
@@ -153,7 +153,9 @@ class TestGenerateEndpoint:
         mock_response = MagicMock(spec=httpx.Response)
         mock_response.is_redirect = False
         mock_response.headers = {"content-type": "text/html; charset=utf-8"}
-        mock_response.text = "<html><body>" + "<p>Paradigm Capital invested $50M in Uniswap. </p>" * 30 + "</body></html>"
+        html_content = "<html><body>" + "<p>Paradigm Capital invested $50M in Uniswap. </p>" * 30 + "</body></html>"
+        mock_response.text = html_content
+        mock_response.content = html_content.encode()
         mock_response.raise_for_status.return_value = None
 
         # Mock OpenAI

@@ -1,4 +1,3 @@
-import os
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt

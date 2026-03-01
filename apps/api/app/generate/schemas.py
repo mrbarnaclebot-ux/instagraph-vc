@@ -81,6 +81,7 @@ class VCKnowledgeGraph(BaseModel):
 
 class GenerateRequest(BaseModel):
     input: str = Field(
+        max_length=100_000,
         description=(
             "Text or HTTPS URL to analyze. "
             "Minimum 200 characters (AI-04). "

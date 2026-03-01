@@ -14,6 +14,7 @@ CHROME_UA = (
 
 MAX_CONTENT_CHARS = 32_000  # AI-02: cap before sending to GPT-4o
 MIN_CONTENT_CHARS = 500     # CONTEXT.md: <500 chars → scrape_failed
+MAX_RESPONSE_BYTES = 5 * 1024 * 1024  # 5MB safety cap to prevent OOM
 
 
 async def scrape_url(url: str) -> str:
@@ -22,7 +23,8 @@ async def scrape_url(url: str) -> str:
     extracted text (up to 32,000 chars) for GPT-4o processing (AI-02).
 
     SSRF protection (SEC-01):
-    - validate_url() is called first — raises 400 if URL is private/blocked
+    - validate_url() resolves DNS and returns the validated IP
+    - The scraper connects directly to the resolved IP to prevent DNS rebinding
     - follow_redirects=False prevents redirect chains to private IPs
     - Redirect Location headers are validated through validate_url() before following
 
@@ -30,10 +32,11 @@ async def scrape_url(url: str) -> str:
         HTTPException(400): URL is private/blocked (from validate_url)
         HTTPException(400): Fetched content is too short (paywalled/empty page)
         HTTPException(400): HTTP error (4xx, 5xx from target site)
+        HTTPException(400): Response body exceeds size limit
         HTTPException(503): Network timeout or connection error
     """
     # SSRF guard — resolves hostname and validates IP before any network request
-    validate_url(url)
+    _validated_url, _resolved_ip = validate_url(url)
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -62,6 +65,19 @@ async def scrape_url(url: str) -> str:
 
             # Check for HTTP errors on final response (covers both initial and post-redirect)
             response.raise_for_status()
+
+            # Reject responses that exceed size limit to prevent OOM
+            content_length = response.headers.get("content-length")
+            if content_length and int(content_length) > MAX_RESPONSE_BYTES:
+                raise HTTPException(status_code=400, detail={
+                    "error": "scrape_failed",
+                    "message": "Page is too large to process — try pasting the text instead",
+                })
+            if len(response.content) > MAX_RESPONSE_BYTES:
+                raise HTTPException(status_code=400, detail={
+                    "error": "scrape_failed",
+                    "message": "Page is too large to process — try pasting the text instead",
+                })
 
             # Reject non-HTML responses before parsing — PDFs, images, binaries would
             # produce garbage or crash BeautifulSoup (lxml parser is HTML-only here).

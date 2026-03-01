@@ -1,12 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { useAuth } from '@clerk/nextjs'
 
-interface LandingNavProps {
-  isAuthenticated?: boolean
-}
+export default function LandingNav() {
+  const { isSignedIn } = useAuth()
 
-export default function LandingNav({ isAuthenticated = false }: LandingNavProps) {
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/90 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
@@ -17,7 +16,7 @@ export default function LandingNav({ isAuthenticated = false }: LandingNavProps)
 
         {/* Auth-aware CTA */}
         <div className="flex items-center gap-3">
-          {isAuthenticated ? (
+          {isSignedIn ? (
             <Link
               href="/app"
               className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-950/50"

@@ -1,6 +1,7 @@
 import type { VCGraph } from '@graphvc/shared-types'
 import type Cytoscape from 'cytoscape'
 import { captureGraphExported } from '@/lib/analytics'
+import { toast } from 'sonner'
 
 function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -49,8 +50,7 @@ export function exportGraphAsJson(graph: VCGraph, title?: string) {
 export function exportGraphAsPng(cy: Cytoscape.Core, graph?: VCGraph, title?: string) {
   const dataUrl = cy.png({ full: true, scale: 2, bg: '#030712', maxWidth: 4096, maxHeight: 4096 })
   if (!dataUrl) {
-    // Graceful handling for very large graphs where canvas exceeds browser limits
-    console.error('PNG export failed: cy.png() returned null (graph may be too large)')
+    toast.error('PNG export failed — graph may be too large. Try JSON export instead.')
     return
   }
   const byteString = atob(dataUrl.split(',')[1])

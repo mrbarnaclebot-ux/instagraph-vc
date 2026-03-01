@@ -14,6 +14,17 @@ const syne = Syne({ subsets: ['latin'], variable: '--font-syne', weight: ['400',
 export const metadata: Metadata = {
   title: 'Instagraph — VC Funding Network Maps',
   description: 'Instantly generate and explore visual maps of VC funding networks from any funding announcement.',
+  openGraph: {
+    title: 'Instagraph — VC Funding Network Maps',
+    description: 'Instantly generate and explore visual maps of VC funding networks from any funding announcement.',
+    type: 'website',
+    siteName: 'Instagraph',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Instagraph — VC Funding Network Maps',
+    description: 'Instantly generate and explore visual maps of VC funding networks from any funding announcement.',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

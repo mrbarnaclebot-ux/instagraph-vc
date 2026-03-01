@@ -26,3 +26,11 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# Hard guard: refuse to start if dev auth bypass is enabled outside development
+if settings.dev_skip_auth and settings.environment != "development":
+    raise RuntimeError(
+        "FATAL: DEV_SKIP_AUTH=true is set in a non-development environment "
+        f"(ENVIRONMENT={settings.environment!r}). This bypasses all authentication. "
+        "Remove DEV_SKIP_AUTH or set ENVIRONMENT=development."
+    )
