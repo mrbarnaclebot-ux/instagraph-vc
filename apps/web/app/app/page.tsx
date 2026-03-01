@@ -2,6 +2,7 @@
 
 import { useAuth } from '@clerk/nextjs'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
@@ -190,7 +191,7 @@ function AppPageInner() {
         onExpand={handleExpand}
       />
 
-      {/* Usage counter — always visible below input */}
+      {/* Usage counter + history link — always visible below input */}
       <div className="px-4 py-1.5 flex items-center gap-3">
         <UsageCounter getToken={getToken} refreshKey={usageRefreshKey} />
         {lastMeta?.cache_hit && (
@@ -199,6 +200,16 @@ function AppPageInner() {
             onRefresh={handleForceRefresh}
           />
         )}
+        <Link
+          href="/app/history"
+          className="ml-auto flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <circle cx="8" cy="8" r="6" />
+            <path d="M8 5v3l2 2" />
+          </svg>
+          History
+        </Link>
       </div>
 
       {/* Main area: loading overlay, canvas, or empty state */}

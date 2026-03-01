@@ -137,9 +137,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-1. Add history and export UI to app page (ui)
-2. Fix anonymous trial generation and add usage toast (ui)
-3. Fix mobile graph sizing for readability (ui)
+None
 
 ### Blockers/Concerns
 

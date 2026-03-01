@@ -8,7 +8,7 @@ def _build_limiters(redis):
     """Build anon and auth rate limiters from a Redis instance."""
     anon = Ratelimit(
         redis=redis,
-        limiter=FixedWindow(max_requests=1, window=86400),
+        limiter=FixedWindow(max_requests=3, window=86400),
         prefix="ratelimit:anon",
     )
     auth = Ratelimit(
@@ -51,7 +51,7 @@ def get_usage(redis, user_id: str, ip: str) -> dict:
     anon_limiter, auth_limiter = _build_limiters(redis)
     limiter = anon_limiter if is_anonymous else auth_limiter
     identifier = ip if is_anonymous else user_id
-    max_requests = 1 if is_anonymous else 3
+    max_requests = 3
     remaining = limiter.get_remaining(identifier)
     reset = limiter.get_reset(identifier)
     used = max_requests - remaining

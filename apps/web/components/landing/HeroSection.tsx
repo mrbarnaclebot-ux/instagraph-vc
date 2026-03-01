@@ -4,9 +4,10 @@ import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import type { VCGraph } from '@graphvc/shared-types'
+import { toast } from 'sonner'
 import DemoGraph from './DemoGraph'
 import TrialModal from '@/components/auth/TrialModal'
-import { isTrialUsed, markTrialUsed } from '@/lib/trial'
+import { isTrialExhausted, incrementTrial, getTrialRemaining } from '@/lib/trial'
 
 const GraphCanvas = dynamic(() => import('@/components/graph/GraphCanvas'), { ssr: false })
 
@@ -41,8 +42,8 @@ export default function HeroSection() {
     e.preventDefault()
     if (!input.trim() || isLoading || trialBlocked) return
 
-    // Trial gate: anonymous users get one free graph
-    if (isTrialUsed()) {
+    // Trial gate: anonymous users get 3 free graphs
+    if (isTrialExhausted()) {
       setShowTrialModal(true)
       return
     }
@@ -78,8 +79,13 @@ export default function HeroSection() {
         return
       }
       setGraph(vcGraph)
-      // Mark trial as used after first successful generation
-      markTrialUsed()
+      incrementTrial()
+      const remaining = getTrialRemaining()
+      if (remaining > 0) {
+        toast.info(`${remaining} of 3 free generations remaining`)
+      } else {
+        toast.info('Sign up to save graphs and keep generating')
+      }
     } catch {
       setError('Request failed. Please try again.')
     } finally {
@@ -193,7 +199,7 @@ export default function HeroSection() {
 
             {/* Social proof / trust */}
             <p className="text-gray-600 text-xs">
-              No account required to try &middot;{' '}
+              3 free graphs, no account required &middot;{' '}
               <Link href="/sign-up" className="text-indigo-500 hover:text-indigo-400 transition-colors">
                 Sign up free
               </Link>

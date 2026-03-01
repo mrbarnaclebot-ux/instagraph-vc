@@ -3,8 +3,8 @@
 import CytoscapeComponent from 'react-cytoscapejs'
 import Cytoscape from 'cytoscape'
 import fcose from 'cytoscape-fcose'
-import { useRef, useCallback, useEffect } from 'react'
-import { cytoscapeStylesheet } from './cytoscapeStyles'
+import { useRef, useCallback, useEffect, useMemo } from 'react'
+import { getCytoscapeStylesheet } from './cytoscapeStyles'
 import type { VCGraph } from '@graphvc/shared-types'
 
 // Register fcose layout once at module level — NOT inside component (would re-register on every render)
@@ -19,6 +19,9 @@ interface GraphCanvasProps {
 
 export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyInit }: GraphCanvasProps) {
   const cyRef = useRef<Cytoscape.Core | null>(null)
+
+  const isMobile = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 768, [])
+  const stylesheet = useMemo(() => getCytoscapeStylesheet(isMobile), [isMobile])
 
   // When selectedNodeId changes externally (e.g., from detail panel navigation), sync highlight
   useEffect(() => {
@@ -83,19 +86,18 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyIn
       />
       <CytoscapeComponent
         elements={elements}
-        stylesheet={cytoscapeStylesheet}
+        stylesheet={stylesheet}
         layout={{
           name: 'fcose',
           animate: true,
           animationDuration: 600,
           animationEasing: 'ease-out',
           fit: true,
-          padding: 40,
+          padding: isMobile ? 60 : 40,
           nodeDimensionsIncludeLabels: true,
         } as Cytoscape.LayoutOptions}
         cy={handleCyInit}
         style={{ width: '100%', height: '100%' }}
-        pixelRatio={1}
         hideEdgesOnViewport={true}
       />
       {/* Entity legend — bottom-left */}
