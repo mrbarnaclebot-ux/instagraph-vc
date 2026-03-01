@@ -49,6 +49,20 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyIn
     cyRef.current = cy
     onCyInit?.(cy)
 
+    // After layout finishes, scale hub nodes by degree so high-connectivity nodes stand out
+    cy.on('layoutstop', () => {
+      const degrees = cy.nodes().map((n) => n.degree(false))
+      const maxDeg = Math.max(...degrees, 1)
+      cy.nodes().forEach((node) => {
+        const deg = node.degree(false)
+        // Scale from 1.0× (leaf) to 1.6× (highest degree hub)
+        const scale = 1 + 0.6 * (deg / maxDeg)
+        const baseW = node.width()
+        const baseH = node.height()
+        node.style({ width: baseW * scale, height: baseH * scale })
+      })
+    })
+
     // Node tap: highlight neighborhood + open detail panel
     cy.on('tap', 'node', (evt) => {
       const node = evt.target as Cytoscape.NodeSingular
@@ -102,6 +116,11 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyIn
           fit: true,
           padding: isMobile ? 60 : 40,
           nodeDimensionsIncludeLabels: true,
+          // Tuned for dense VC graphs (12+ investors in same round)
+          nodeRepulsion: 8000,        // push nodes apart (default ~4500)
+          idealEdgeLength: 120,       // longer edges = more breathing room
+          edgeElasticity: 0.2,        // stiffer = less tangling
+          numIter: 5000,              // more iterations = better convergence
         } as Cytoscape.LayoutOptions}
         cy={handleCyInit}
         style={{ width: '100%', height: '100%' }}

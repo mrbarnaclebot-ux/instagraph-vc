@@ -29,4 +29,5 @@ Use only these relationship types:
 3. Only extract entities explicitly mentioned — do not infer or hallucinate
 4. If no VC entities are found, return empty nodes and edges arrays
 5. Properties are optional — omit unknown values rather than guessing
+6. CO_INVESTED edges: only create CO_INVESTED between the lead investor(s) and other investors in the same round — do NOT create all pairwise combinations. If no lead is identified, create CO_INVESTED only between the first 3 listed investors. This keeps the graph readable.
 """

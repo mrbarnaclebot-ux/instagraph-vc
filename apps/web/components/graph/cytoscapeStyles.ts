@@ -22,9 +22,13 @@ export function getCytoscapeStylesheet(isMobile: boolean): any[] {
         // nodes to their text — no replacement API exists in Cytoscape 3.x
         'width': 'label',
         'height': 'label',
+        'min-width': isMobile ? 50 : 40,
+        'min-height': isMobile ? 50 : 40,
         'padding': nodePadding,
         'border-width': nodeBorderWidth,
         'border-opacity': 0.5,
+        'text-max-width': isMobile ? '140px' : '120px',
+        'text-wrap': 'wrap',
       },
     },
 
@@ -113,7 +117,7 @@ export function getCytoscapeStylesheet(isMobile: boolean): any[] {
       },
     },
 
-    // Edge default
+    // Edge default — haystack for parallel edge separation
     {
       selector: 'edge',
       style: {
@@ -132,6 +136,21 @@ export function getCytoscapeStylesheet(isMobile: boolean): any[] {
         'arrow-scale': 0.85,
         'width': edgeWidth,
         'color': '#6b7280',
+        'control-point-step-size': 40,
+      },
+    },
+
+    // CO_INVESTED edges — subtler to reduce visual clutter
+    {
+      selector: 'edge[label = "CO_INVESTED"]',
+      style: {
+        'line-style': 'dashed',
+        'line-dash-pattern': [4, 4],
+        'line-color': '#4b5563',
+        'target-arrow-shape': 'none',
+        'width': Math.max(edgeWidth - 0.5, 0.75),
+        'opacity': 0.5,
+        'font-size': Math.max(edgeFontSize - 1, 6),
       },
     },
 
