@@ -134,7 +134,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 **Goal:** Remove all "crypto VC" references from frontend text and replace with general "VC" language, add attribution to Yohei Nakajima's InstaGraph, add community/token links to the footer, and standardize brand name to "Instagraph" across all pages
 **Requirements**: None (post-v1.0 todo-driven phase)
 **Depends on:** Phase 5
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 06-01-PLAN.md — Copy sweep: remove crypto references, add hero attribution, standardize brand name
