@@ -42,8 +42,7 @@ export default function TermsPage() {
 
           <Section title="1. The Service">
             <p className="text-gray-400 text-sm leading-relaxed">
-              Instagraph provides a tool that uses AI to extract entities and relationships from crypto
-              VC funding announcements and visualizes them as interactive knowledge graphs. The service
+              Instagraph provides a tool that uses AI to extract entities and relationships from VC funding announcements and visualizes them as interactive knowledge graphs. The service
               is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis.
             </p>
           </Section>

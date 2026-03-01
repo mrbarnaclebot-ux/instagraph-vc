@@ -8,7 +8,7 @@ export default function SignInPage() {
       <nav className="border-b border-gray-800/60 bg-gray-950/90 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
           <Link href="/" className="text-white font-bold text-base tracking-tight">
-            GraphVC
+            Instagraph
           </Link>
           <Link
             href="/sign-up"

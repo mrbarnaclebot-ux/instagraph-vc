@@ -35,7 +35,7 @@ export default function PrivacyPage() {
             <p className="text-gray-500 text-sm">Last updated: {LAST_UPDATED}</p>
             <p className="text-gray-400 text-sm leading-relaxed">
               Instagraph (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) operates the Instagraph platform — a tool that
-              generates visual knowledge graphs from crypto VC funding announcements. This Privacy
+              generates visual knowledge graphs from VC funding announcements. This Privacy
               Policy explains how we collect, use, and protect your information when you use our service.
             </p>
           </div>

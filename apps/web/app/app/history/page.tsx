@@ -40,7 +40,7 @@ export default function HistoryPage() {
       <nav className="border-b border-gray-800/60 bg-gray-950/90 backdrop-blur-sm sticky top-0 z-10">
         <div className="mx-auto max-w-5xl px-6 h-14 flex items-center justify-between">
           <Link href="/app" className="text-white font-bold text-base tracking-tight">
-            GraphVC
+            Instagraph
           </Link>
           <Link href="/app" className="text-sm text-gray-400 hover:text-white transition-colors">
             &larr; Back to generator
