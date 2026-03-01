@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from datetime import datetime, timezone
 from openai import OpenAI
 
+from fastapi import HTTPException
 from app.config import settings
 from app.generate.schemas import VCKnowledgeGraph
 from app.generate.prompts import SYSTEM_PROMPT
@@ -113,7 +114,6 @@ async def run_generate_pipeline(
             response_format=VCKnowledgeGraph,
         )
     except Exception as e:
-        from fastapi import HTTPException
         from openai import RateLimitError, AuthenticationError, APIStatusError
         if isinstance(e, RateLimitError):
             raise HTTPException(status_code=429, detail={
@@ -140,7 +140,6 @@ async def run_generate_pipeline(
 
     parsed: VCKnowledgeGraph | None = response.choices[0].message.parsed
     if parsed is None:
-        from fastapi import HTTPException
         raise HTTPException(status_code=400, detail={
             "error": "invalid_request",
             "message": "Could not extract a knowledge graph from this input — try a different article or more detailed text",
@@ -155,7 +154,6 @@ async def run_generate_pipeline(
     try:
         await asyncio.to_thread(persist_graph, driver, session_id=session_id, nodes=nodes, edges=edges, user_id=user_id)
     except Exception:
-        from fastapi import HTTPException
         raise HTTPException(status_code=503, detail={
             "error": "service_unavailable",
             "message": "Graph database unavailable — please try again",
