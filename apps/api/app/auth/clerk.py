@@ -82,29 +82,10 @@ async def get_current_user(
             options={"verify_exp": True},
         )
 
-        # Validate azp claim (SEC-03: authorized_parties check)
-        # azp = Authorized Party — the frontend origin that issued the token
-        # This prevents tokens issued for one app being used against another
-        azp = payload.get("azp", "")
-        allowed_parties = [
-            p.strip()
-            for p in settings.clerk_authorized_party.split(",")
-            if p.strip()
-        ]
-        if azp and allowed_parties and azp not in allowed_parties:
-            raise jwt.InvalidClaimError("azp claim not in authorized parties")
-
-        return payload
-
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=401,
             detail={"error": "unauthorized", "message": "Token expired"},
-        )
-    except jwt.InvalidClaimError:
-        raise HTTPException(
-            status_code=401,
-            detail={"error": "unauthorized", "message": "Token claim validation failed"},
         )
     except jwt.DecodeError:
         raise HTTPException(
@@ -117,6 +98,23 @@ async def get_current_user(
             status_code=401,
             detail={"error": "unauthorized", "message": "Token verification failed"},
         )
+
+    # Validate azp claim (SEC-03: authorized_parties check)
+    # azp = Authorized Party — the frontend origin that issued the token
+    # This prevents tokens issued for one app being used against another
+    azp = payload.get("azp", "")
+    allowed_parties = [
+        p.strip()
+        for p in settings.clerk_authorized_party.split(",")
+        if p.strip()
+    ]
+    if azp and allowed_parties and azp not in allowed_parties:
+        raise HTTPException(
+            status_code=401,
+            detail={"error": "unauthorized", "message": "Token claim validation failed"},
+        )
+
+    return payload
 
 
 async def get_optional_user(

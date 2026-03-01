@@ -131,9 +131,9 @@ export default function PrivacyPage() {
               <li>Data portability (export your data in a machine-readable format)</li>
             </ul>
             <p className="text-gray-400 text-sm leading-relaxed mt-3">
-              To exercise any of these rights, contact us at{' '}
-              <a href="mailto:privacy@instagraph.ai" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-                privacy@instagraph.ai
+              To exercise any of these rights, open an issue at{' '}
+              <a href="https://github.com/uziminhas/instagraph-vc/issues" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                github.com/uziminhas/instagraph-vc/issues
               </a>.
             </p>
           </Section>
@@ -179,9 +179,9 @@ export default function PrivacyPage() {
             <div className="mt-3 p-4 rounded-xl bg-gray-900 border border-gray-800 text-sm space-y-1">
               <p className="text-gray-300 font-medium">Instagraph</p>
               <p className="text-gray-500">
-                Email:{' '}
-                <a href="mailto:privacy@instagraph.ai" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-                  privacy@instagraph.ai
+                Open an issue:{' '}
+                <a href="https://github.com/uziminhas/instagraph-vc/issues" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                  github.com/uziminhas/instagraph-vc/issues
                 </a>
               </p>
             </div>

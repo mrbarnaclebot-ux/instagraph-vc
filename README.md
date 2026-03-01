@@ -119,20 +119,6 @@ instagraph-vc/
 
 ## What's Left to Build
 
-### Phase 3 — Auth + Persistence (Not started)
-- Clerk sign-up / sign-in with email and Google OAuth
-- Route protection: `/app/*` redirects unauthenticated users to `/sign-in`
-- Per-user graph ownership: `created_by` user_id on Neo4j nodes
-- Graph history at `/app/history` — searchable, with delete
-- Anonymous trial limit: 1 free graph, then sign-up prompt
-- Supabase request logging (user_id, endpoint, tokens used, IP, status)
-
-### Phase 4 — Guardrails + Export (Not started)
-- Rate limiting: 1 graph/day anonymous, 10 graphs/day free account (429 + Retry-After)
-- Redis URL caching: identical URLs within 1 hour skip re-scrape (Upstash Redis)
-- JSON export: download graph as `graph.json`
-- PNG export: Cytoscape canvas capture via html-to-image
-
 ### Backlog / Nice to Have
 - Ability to combine two graphs (upstream idea from original InstaGraph)
 - Fuzzy node matching for graph merging (vector match + LLM confirmation)
@@ -174,6 +160,17 @@ At minimum for local development, you need:
 - `DEV_SKIP_AUTH=true` — bypasses Clerk JWT auth for local dev
 
 See `apps/api/.env.example` and `apps/web/.env.local.example` for all available options.
+
+### Local Services
+
+A `docker-compose.yml` is included for local Neo4j and Redis instances:
+
+```bash
+docker compose up -d   # Starts Neo4j + Redis for local dev
+```
+
+Neo4j will be available at `bolt://localhost:7687` and the browser at `http://localhost:7474`.
+Redis will be available at `localhost:6379`.
 
 ### Run
 

@@ -160,9 +160,9 @@ export default function TermsPage() {
             <div className="mt-3 p-4 rounded-xl bg-gray-900 border border-gray-800 text-sm space-y-1">
               <p className="text-gray-300 font-medium">Instagraph</p>
               <p className="text-gray-500">
-                Email:{' '}
-                <a href="mailto:legal@instagraph.ai" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-                  legal@instagraph.ai
+                Open an issue:{' '}
+                <a href="https://github.com/uziminhas/instagraph-vc/issues" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                  github.com/uziminhas/instagraph-vc/issues
                 </a>
               </p>
             </div>

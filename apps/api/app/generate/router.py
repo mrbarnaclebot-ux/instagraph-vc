@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -40,7 +41,7 @@ async def generate(
     if not openai_key:
         # Check per-user daily rate limit (RATE-01)
         ip = request.client.host if request.client else "127.0.0.1"
-        check_rate_limit(redis, user_id, ip)
+        await asyncio.to_thread(check_rate_limit, redis, user_id, ip)
 
     result = await run_generate_pipeline(
         raw_input=body.input,
@@ -57,15 +58,17 @@ async def generate(
     # AUTH-04: Log request to Supabase (fire-and-forget — failure must not affect response)
     if supabase is not None:
         try:
-            supabase.table("request_log").insert({
-                "user_id": user_id,
-                "endpoint": "/api/generate",
-                "source_url": body.input.strip() if _is_url(body.input) else None,
-                "ip": request.client.host if request.client else None,
-                "status_code": 200,
-                "tokens_used": result["meta"]["token_count"],
-                "processing_ms": processing_ms,
-            }).execute()
+            await asyncio.to_thread(
+                lambda: supabase.table("request_log").insert({
+                    "user_id": user_id,
+                    "endpoint": "/api/generate",
+                    "source_url": body.input.strip() if _is_url(body.input) else None,
+                    "ip": request.client.host if request.client else None,
+                    "status_code": 200,
+                    "tokens_used": result["meta"]["token_count"],
+                    "processing_ms": processing_ms,
+                }).execute()
+            )
         except Exception:
             logger.warning("Failed to log request to Supabase", exc_info=True)
 
@@ -80,7 +83,7 @@ async def get_session(
 ) -> dict:
     """Retrieve a previously generated graph by session_id (FE-03: history reload)."""
     user_id = current_user.get("sub", "")
-    graph = get_graph_by_session(driver, session_id, user_id=user_id)
+    graph = await asyncio.to_thread(get_graph_by_session, driver, session_id, user_id=user_id)
     if graph is None:
         raise HTTPException(status_code=404, detail={
             "error": "not_found",

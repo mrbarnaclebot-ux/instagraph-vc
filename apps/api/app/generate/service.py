@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 import uuid
@@ -80,14 +81,14 @@ async def run_generate_pipeline(
         source_type = "url"
         # RATE-03: Check URL cache before scraping (Phase 4)
         if not force_refresh:
-            cached_text, cache_age = get_cached_scrape(redis, raw_input.strip())
+            cached_text, cache_age = await asyncio.to_thread(get_cached_scrape, redis, raw_input.strip())
             if cached_text is not None:
                 content = cached_text
                 cache_hit = True
                 cache_age_seconds = cache_age
         if not cache_hit:
             content = await scrape_url(raw_input.strip())
-            cache_scrape(redis, raw_input.strip(), content)
+            await asyncio.to_thread(cache_scrape, redis, raw_input.strip(), content)
     else:
         source_type = "text"
         validate_input_length(raw_input)
@@ -95,12 +96,15 @@ async def run_generate_pipeline(
 
     # AI-01: GPT-4o structured extraction via native structured outputs
     # BYOK: if user provides their own key, use a transient client (never stored/logged)
+    byok_client = None
     if openai_api_key:
-        client = OpenAI(api_key=openai_api_key)
+        byok_client = OpenAI(api_key=openai_api_key)
+        client = byok_client
     else:
         client = _get_openai_client()
     try:
-        response = client.beta.chat.completions.parse(
+        response = await asyncio.to_thread(
+            client.beta.chat.completions.parse,
             model=settings.openai_model,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
@@ -130,6 +134,9 @@ async def run_generate_pipeline(
             "error": "service_unavailable",
             "message": "AI service unavailable — please try again",
         })
+    finally:
+        if byok_client is not None:
+            byok_client.close()
 
     parsed: VCKnowledgeGraph | None = response.choices[0].message.parsed
     if parsed is None:
@@ -146,7 +153,7 @@ async def run_generate_pipeline(
 
     # Persist to Neo4j with ownership (AI-05) — parameterized Cypher only (SEC-02)
     try:
-        persist_graph(driver, session_id=session_id, nodes=nodes, edges=edges, user_id=user_id)
+        await asyncio.to_thread(persist_graph, driver, session_id=session_id, nodes=nodes, edges=edges, user_id=user_id)
     except Exception:
         from fastapi import HTTPException
         raise HTTPException(status_code=503, detail={
@@ -160,19 +167,23 @@ async def run_generate_pipeline(
         title = _auto_title(raw_input)
         try:
             # Ensure user exists in Supabase (Clerk webhook may not have fired in dev)
-            supabase.table("users").upsert(
-                {"id": user_id, "email": f"{user_id}@placeholder.local", "plan": "free"},
-                on_conflict="id",
-                ignore_duplicates=True,
-            ).execute()
-            supabase.table("graphs").insert({
-                "user_id": user_id,
-                "title": title,
-                "source_url": raw_input.strip() if _is_url(raw_input) else None,
-                "node_count": len(nodes),
-                "edge_count": len(edges),
-                "neo4j_session_id": session_id,
-            }).execute()
+            await asyncio.to_thread(
+                lambda: supabase.table("users").upsert(
+                    {"id": user_id, "email": f"{user_id}@placeholder.local", "plan": "free"},
+                    on_conflict="id",
+                    ignore_duplicates=True,
+                ).execute()
+            )
+            await asyncio.to_thread(
+                lambda: supabase.table("graphs").insert({
+                    "user_id": user_id,
+                    "title": title,
+                    "source_url": raw_input.strip() if _is_url(raw_input) else None,
+                    "node_count": len(nodes),
+                    "edge_count": len(edges),
+                    "neo4j_session_id": session_id,
+                }).execute()
+            )
         except Exception:
             logger.warning("Failed to save graph metadata to Supabase", exc_info=True)
 
