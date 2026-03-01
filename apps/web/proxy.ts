@@ -10,6 +10,8 @@ const isPublicRoute = createRouteMatcher([
   '/privacy(.*)',
   '/terms(.*)',
   '/api/webhooks/(.*)', // Clerk webhook must be public (no Clerk session)
+  '/api/generate',      // Anonymous trial users — FastAPI handles its own auth
+  '/api/usage',         // Rate-limit check for anonymous users
 ])
 
 // RATE-02: Per-IP brute-force protection (60 req/min sliding window)
