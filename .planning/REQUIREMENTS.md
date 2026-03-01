@@ -19,7 +19,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SEC-02**: All Neo4j database queries use parameterised Cypher (driver parameter objects) — zero string interpolation into query strings anywhere in the codebase
 - [x] **SEC-03**: Every FastAPI protected endpoint validates the Clerk JWT Bearer token — verifying signature via Clerk JWKS, `azp` claim, and expiry — before executing any business logic
 - [x] **SEC-04**: FastAPI initialises a single Neo4j driver instance at startup (singleton), reuses it across requests, and closes it gracefully on shutdown — no per-request driver instantiation
-- [ ] **SEC-05**: Next.js middleware sets security headers on every response: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and a Content Security Policy that covers script/style/connect sources
+- [x] **SEC-05**: Next.js middleware sets security headers on every response: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and a Content Security Policy that covers script/style/connect sources
 
 ### AI & Graph Generation
 
@@ -59,7 +59,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **OBS-01**: Sentry is configured on both the Next.js frontend and FastAPI backend; uncaught exceptions and API errors (5xx) are captured with user context; alert fires when error rate exceeds 1% in a 5-minute window
 - [x] **OBS-02**: PostHog is configured on the frontend and tracks `graph_generated` (with node_count, edge_count, source_type), `graph_exported` (with format), and `graph_history_viewed` events
-- [ ] **OBS-03**: (Covered by SEC-05 — security headers include CSP)
+- [x] **OBS-03**: (Covered by SEC-05 — security headers include CSP)
 
 ---
 
@@ -115,10 +115,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-02 | Phase 1 | Complete | |
 | SEC-03 | Phase 1 | Complete | |
 | SEC-04 | Phase 1 | Complete | |
-| SEC-05 | Phase 5 | Pending | |
+| SEC-05 | Phase 5 | Complete | |
 | AI-01 | Phase 1 | Complete | |
 | AI-02 (scraping/extraction) | Phase 1 | Complete | Plan 01-03: scrape URL, strip HTML, cap at 32k chars |
-| AI-02 (Redis caching) | Phase 4 | Pending | With RATE-03: cache scraped text in Redis for 1 hour |
+| AI-02 (Redis caching) | Phase 4 | Complete | With RATE-03: cache scraped text in Redis for 1 hour |
 | AI-03 | Phase 1 | Complete | |
 | AI-04 | Phase 1 | Complete | |
 | AI-05 | Phase 3 | Complete | |

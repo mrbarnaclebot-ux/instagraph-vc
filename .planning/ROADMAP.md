@@ -15,8 +15,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Backend Foundation** - FastAPI service with VC-specific AI pipeline, SSRF-hardened scraper, and all security primitives in place (completed 2026-02-25)
 - [x] **Phase 2: Monorepo + Vertical Slice** - Turborepo scaffold, Next.js BFF, and working Cytoscape UI proving the full input-to-graph flow (completed 2026-02-26, UAT 8/8 passed 2026-02-27)
 - [x] **Phase 3: Auth + Persistence** - Clerk authentication, per-user graph ownership, Supabase metadata, and graph history (completed 2026-02-27, UAT 8/8 passed 2026-02-27)
-- [ ] **Phase 4: Guardrails + Export** - Rate limiting with user feedback, Redis URL caching, JSON and PNG export (planned, not yet executed)
-- [x] **Phase 5: Landing Page + Observability** - Public marketing surface, security headers, Sentry error tracking, and PostHog analytics (gap closure in progress) (completed 2026-02-26)
+- [x] **Phase 4: Guardrails + Export** - Rate limiting with user feedback, Redis URL caching, JSON and PNG export (completed 2026-02-28)
+- [x] **Phase 5: Landing Page + Observability** - Public marketing surface, security headers, Sentry error tracking, and PostHog analytics (completed 2026-03-01)
 
 ## Phase Details
 
@@ -39,7 +39,7 @@ Plans:
 - [x] 01-04-PLAN.md — Clerk JWT auth dependency via PyJWT + PyJWKClient
 - [x] 01-05-PLAN.md — POST /api/generate endpoint: wires scraper + GPT-4o + Neo4j + auth
 - [x] 01-06-PLAN.md — Gap closure: client-side 200-char text validation + friendly 503 error handling
-- [ ] 01-07-PLAN.md — Gap closure: fix 3 test regressions from stale Content-Type mocks in test_scraper.py and test_generate.py
+- [x] 01-07-PLAN.md — Gap closure: fix 3 test regressions from stale Content-Type mocks in test_scraper.py and test_generate.py
 
 ### Phase 2: Monorepo + Vertical Slice
 **Goal**: The Turborepo monorepo is scaffolded with Next.js 15 and FastAPI co-located; a developer can submit a URL or text in the browser, watch the graph generate, and interact with a styled Cytoscape canvas — without authentication
@@ -86,16 +86,16 @@ Plans:
 **Requirements**: RATE-01, RATE-02, RATE-03, AI-02 (Redis caching sub-requirement — caches raw scraped text in Redis for 1 hour so identical URLs skip re-scraping), EXP-01, EXP-02
 **Success Criteria** (what must be TRUE):
   1. Anonymous user who has already generated one graph today receives a 429 response with a `Retry-After` header; the UI shows a toast with the retry time rather than a blank error
-  2. Free authenticated user who has generated 10 graphs today sees the same 429 + toast; the daily count resets at midnight UTC
+  2. Free authenticated user who has generated 3 graphs today sees the same 429 + toast; the daily count resets at midnight UTC
   3. Two different users who submit the same URL within one hour each see their graphs generated from the same cached scrape — only one outbound HTTP request leaves the backend for that URL
   4. User can click "Export JSON" and download a JSON file containing the current graph's nodes and edges in the standard API response format
-  5. User can click "Export PNG" and receive a download link to a PNG image of the current Cytoscape canvas captured at full resolution via html-to-image
+  5. User can click "Export PNG" and download a PNG image of the current Cytoscape canvas captured at full resolution via Cytoscape's native `cy.png()` API
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Backend rate limiting (Upstash Redis), URL scrape caching, BYOK support, /api/usage endpoint
-- [ ] 04-02-PLAN.md — Graph export FABs (JSON + PNG via cy.png) + Edge middleware IP rate limiting
-- [ ] 04-03-PLAN.md — Frontend rate limit UX: usage counter, API key modal, 429 handling, cached indicator
+- [x] 04-01-PLAN.md — Backend rate limiting (Upstash Redis), URL scrape caching, BYOK support, /api/usage endpoint
+- [x] 04-02-PLAN.md — Graph export FABs (JSON + PNG via cy.png) + Edge middleware IP rate limiting
+- [x] 04-03-PLAN.md — Frontend rate limit UX: usage counter, API key modal, 429 handling, cached indicator
 
 ### Phase 5: Landing Page + Observability
 **Goal**: The product has a public acquisition surface, is hardened with security headers, and is instrumented so that production errors and user funnel events are visible before any public traffic arrives
@@ -113,8 +113,8 @@ Plans:
 - [x] 05-02-PLAN.md — PostHog provider, analytics helpers, graph_generated event (OBS-02)
 - [x] 05-03-PLAN.md — Landing page foundation: DemoGraph canvas, LandingNav, HeroSection (FE-04)
 - [x] 05-04-PLAN.md — Landing page completion: HowItWorks, PersonaCards, CtaBand, Footer, page assembly + verification (FE-04)
-- [ ] 05-05-PLAN.md — Gap closure: PostHog conditional init guard in providers.tsx (OBS-02)
-- [ ] 05-06-PLAN.md — Gap closure: HeroSection graph render — VCGraph state + dynamic GraphCanvas replacing DemoGraph on success (FE-04)
+- [x] 05-05-PLAN.md — Gap closure: PostHog conditional init guard in providers.tsx (OBS-02)
+- [x] 05-06-PLAN.md — Gap closure: HeroSection graph render — VCGraph state + dynamic GraphCanvas replacing DemoGraph on success (FE-04)
 
 ## Progress
 
@@ -123,11 +123,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | UAT | Completed |
 |-------|----------------|--------|-----|-----------|
-| 1. Backend Foundation | 6/7 | Gap closure planned | 7/10 passed (diagnosed) | 2026-02-25 |
+| 1. Backend Foundation | 7/7 | Complete | 7/10 passed (diagnosed) | 2026-02-25 |
 | 2. Monorepo + Vertical Slice | 6/6 | Complete | 8/8 passed | 2026-02-26 |
 | 3. Auth + Persistence | 6/6 | Complete | 8/8 passed | 2026-02-27 |
-| 4. Guardrails + Export | 2/3 | In Progress|  | - |
-| 5. Landing Page + Observability | 6/6 | Complete | 5/6 passed (diagnosed) | 2026-02-26 |
+| 4. Guardrails + Export | 3/3 | Complete | | 2026-02-28 |
+| 5. Landing Page + Observability | 6/6 | Complete | 5/6 passed (diagnosed) | 2026-03-01 |
 
 ---
 *Roadmap created: 2026-02-25*
