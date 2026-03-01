@@ -129,6 +129,17 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 4. Guardrails + Export | 3/3 | Complete | | 2026-02-28 |
 | 5. Landing Page + Observability | 6/6 | Complete | 5/6 passed (diagnosed) | 2026-03-01 |
 
+### Phase 6: Rebrand from crypto VC to general VC research tool with attribution
+
+**Goal:** Remove all "crypto VC" references from frontend text and replace with general "VC" language, add attribution to Yohei Nakajima's InstaGraph, add community/token links to the footer, and standardize brand name to "Instagraph" across all pages
+**Requirements**: None (post-v1.0 todo-driven phase)
+**Depends on:** Phase 5
+**Plans:** 2 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Copy sweep: remove crypto references, add hero attribution, standardize brand name
+- [ ] 06-02-PLAN.md — Footer restructure: attribution, community links, Solana CA copy button
+
 ---
 *Roadmap created: 2026-02-25*
 *Coverage: 27/27 v1 requirements mapped*

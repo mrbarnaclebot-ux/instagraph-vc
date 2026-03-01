@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-01T00:50:27.013Z"
+status: complete
+last_updated: "2026-03-01T05:39:00Z"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 28
-  completed_plans: 28
+  total_phases: 6
+  completed_phases: 6
+  total_plans: 30
+  completed_plans: 30
 ---
 
 # Project State
@@ -22,10 +22,10 @@ See: .planning/PROJECT.md (updated 2026-02-25)
 
 ## Current Position
 
-Phase: 5 of 5 (All Complete)
-Plan: All plans executed across all phases
-Status: All 5 phases complete. 28/28 plans executed.
-Last activity: 2026-03-01 — Phase 5 marked complete, Phase 4 verification gaps resolved
+Phase: 6 of 6
+Plan: 2 of 2 (Plans 01 and 02 complete)
+Status: Phase 6 complete. 30/30 plans executed.
+Last activity: 2026-03-01 — Phase 6 Plan 01 complete (copy sweep + hero attribution + brand standardization)
 
 Progress: [██████████] 100%
 
@@ -68,8 +68,14 @@ Progress: [██████████] 100%
 | Phase 04-guardrails-export PP01 | 10 min | 2 tasks | 12 files |
 | Phase 04-guardrails-export PP02 | 3 | 3 tasks | 7 files |
 | 04-guardrails-export | P03 | 3 min | 2 | 7 |
+| 06-rebrand | P02 | 1 min | 2 | 1 |
+| 06-rebrand | P01 | 2 min | 2 | 8 |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 6 added: Rebrand from crypto VC to general VC research tool with attribution
 
 ### Decisions
 
@@ -134,6 +140,10 @@ Recent decisions affecting current work:
 - [Phase 04-03]: UsageCounter and CachedIndicator rendered in shared bar below InputCard for persistent visibility
 - [Phase 04-03]: HeroSection 429 reuses existing TrialModal (sign-up prompt) -- appropriate for anonymous landing page users
 - [Phase 04-03]: Force-refresh pattern: callback re-submits last input with { forceRefresh: true } option
+- [Phase 06-02]: Single component rewrite for footer -- grid restructure and copy-to-clipboard are inseparable
+- [Phase 06-02]: Solana CA rendered as <button> not <a> -- copy-only behavior, no block explorer link
+- [Phase 06-02]: Attribution link wraps 'InstaGraph by Yohei Nakajima' as single anchor
+- [Phase 06-01]: Brand name standardized to 'Instagraph' everywhere (not GraphVC) — aligns with InstaGraph attribution story
 
 ### Pending Todos
 
@@ -148,6 +158,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-27
-Stopped at: Completed 04-03-PLAN.md (Frontend rate limiting UX) -- Phase 04 complete
+Last session: 2026-03-01
+Stopped at: Completed 06-01-PLAN.md (copy sweep + hero attribution + brand standardization)
 Resume file: None
