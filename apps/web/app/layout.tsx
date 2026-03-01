@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono, Syne } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { PostHogProvider } from './providers'
 import './globals.css'
 
@@ -22,6 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PostHogProvider>
             {children}
             <Toaster richColors position="top-right" />
+            <Analytics />
+            <SpeedInsights />
           </PostHogProvider>
         </body>
       </html>
