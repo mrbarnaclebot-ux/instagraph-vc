@@ -132,11 +132,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 ---
 *Roadmap created: 2026-02-25*
 *Coverage: 27/27 v1 requirements mapped*
-*Phase 1 planned: 2026-02-25 — 5 plans across 3 waves + 1 gap closure plan (Wave 1)*
+*Phase 1 planned: 2026-02-25 — 5 plans across 3 waves + 2 gap closure plans*
 *Phase 1 gap closure: 2026-02-27 — 1 additional gap closure plan (01-07) for test regression fix*
 *Phase 3 planned: 2026-02-27 — 6 plans across 4 waves*
+*Phase 4 planned: 2026-02-27 — 3 plans across 2 waves*
 *Phase 5 planned: 2026-02-26 — 4 plans across 2 waves + 2 gap closure plans (Wave 1)*
 *AI-02 note: scraping/extraction sub-requirement in Phase 1 (plan 01-03); Redis caching sub-requirement in Phase 4 (with RATE-03)*
 *UAT Phase 2: 2026-02-27 — 8/8 passed (edge label rendering quirk noted, not blocking)*
 *UAT Phase 3: 2026-02-27 — 8/8 passed*
-*UAT Phase 4: 2026-02-27 — skipped (not executed, plans only)*
