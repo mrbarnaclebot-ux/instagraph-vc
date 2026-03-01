@@ -10,8 +10,8 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 const syne = Syne({ subsets: ['latin'], variable: '--font-syne', weight: ['400', '500', '600', '700', '800'] })
 
 export const metadata: Metadata = {
-  title: 'GraphVC — Crypto VC Relationship Maps',
-  description: 'Instantly generate and explore visual maps of crypto VC relationships from any funding announcement.',
+  title: 'Instagraph — VC Funding Network Maps',
+  description: 'Instantly generate and explore visual maps of VC funding networks from any funding announcement.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

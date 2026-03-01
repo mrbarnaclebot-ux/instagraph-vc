@@ -85,7 +85,7 @@ export default function InputCard({ collapsed, disabled, onSubmit, onExpand }: I
               </Link>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
-              Paste a URL or text about a crypto VC deal
+              Paste a URL or text about a VC funding deal
             </p>
           </div>
 
@@ -135,7 +135,7 @@ export default function InputCard({ collapsed, disabled, onSubmit, onExpand }: I
                     ref={textareaRef}
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
-                    placeholder="Paste a funding announcement, blog post, or article about a crypto VC deal..."
+                    placeholder="Paste a funding announcement, blog post, or article about a VC deal..."
                     disabled={disabled}
                     rows={5}
                     className="w-full bg-gray-800/40 border border-gray-700/50 rounded-lg pl-4 pr-3 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-violet-500/50 focus:bg-gray-800/60 focus:shadow-[0_0_24px_-6px_rgba(139,92,246,0.15)] transition-all resize-none disabled:opacity-50"

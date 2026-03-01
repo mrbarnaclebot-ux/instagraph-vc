@@ -75,7 +75,7 @@ export default function HeroSection() {
       const data = await res.json()
       const vcGraph: VCGraph = data.graph
       if (!vcGraph?.nodes?.length) {
-        setError('No VC relationships found. Try a more specific funding announcement.')
+        setError('No VC relationships found. Try a more detailed funding announcement.')
         return
       }
       setGraph(vcGraph)
@@ -110,19 +110,29 @@ export default function HeroSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-              AI-powered VC graph intelligence
+              VC funding graph engine
             </div>
 
             <div className="space-y-5">
               <h1 className="text-4xl lg:text-5xl font-black text-white leading-[1.1] tracking-tight">
-                Map the crypto VC{' '}
+                Map VC funding networks with{' '}
                 <span className="relative">
                   <span className="relative z-10 bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                    network
+                    knowledge graphs
                   </span>
                 </span>
-                {' '}in seconds
               </h1>
+              <p className="text-sm text-gray-500">
+                Built on{' '}
+                <a
+                  href="https://github.com/yoheinakajima/instagraph"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                  Yohei Nakajima&apos;s InstaGraph
+                </a>
+              </p>
               <p className="text-base text-gray-400 max-w-lg leading-relaxed">
                 Paste any funding announcement or URL. AI extracts investors, projects, rounds,
                 and relationships — instantly visualized as an interactive knowledge graph.
