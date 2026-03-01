@@ -137,7 +137,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None
+1. Rebrand from crypto VC to general VC research tool with attribution (ui)
 
 ### Blockers/Concerns
 
