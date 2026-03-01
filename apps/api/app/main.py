@@ -28,9 +28,14 @@ if settings.sentry_dsn:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup — create driver singleton (SEC-04)
+    # Aura Free Tier idles after inactivity → stale connections.
+    # liveness_check_timeout keeps the pool healthy by probing before use.
     app.state.neo4j_driver = GraphDatabase.driver(
         settings.neo4j_uri,
         auth=(settings.neo4j_username, settings.neo4j_password),
+        max_connection_pool_size=10,
+        connection_acquisition_timeout=30,
+        liveness_check_timeout=5,
     )
     app.state.neo4j_driver.verify_connectivity()
     # Create session_id index on startup (idempotent)
@@ -69,4 +74,9 @@ app.include_router(ratelimit_router)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    try:
+        app.state.neo4j_driver.verify_connectivity()
+        neo4j = "ok"
+    except Exception:
+        neo4j = "unavailable"
+    return {"status": "ok" if neo4j == "ok" else "degraded", "neo4j": neo4j}

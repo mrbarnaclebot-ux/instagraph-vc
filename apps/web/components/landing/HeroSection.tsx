@@ -207,11 +207,14 @@ export default function HeroSection() {
             </p>
           </div>
 
-          {/* Right — graph preview */}
-          <div className="hidden lg:flex lg:flex-col gap-3">
+          {/* Right — graph preview (desktop: always visible, mobile: only after generation) */}
+          <div className={[
+            'flex flex-col gap-3',
+            graph || isLoading ? '' : 'hidden lg:flex',
+          ].join(' ')}>
             <div
               className={[
-                'h-[520px] rounded-2xl overflow-hidden border bg-gray-900/80 transition-all duration-700 relative',
+                'h-[400px] lg:h-[520px] rounded-2xl overflow-hidden border bg-gray-900/80 transition-all duration-700 relative',
                 graph
                   ? 'border-indigo-600/40 shadow-2xl shadow-indigo-950/60'
                   : 'border-gray-800/80 shadow-2xl shadow-black/50',

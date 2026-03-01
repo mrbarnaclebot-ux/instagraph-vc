@@ -1,6 +1,8 @@
 import json
+import time
 from typing import Any
 from neo4j import Driver
+from neo4j.exceptions import ServiceUnavailable, SessionExpired
 
 
 def persist_graph(
@@ -27,6 +29,28 @@ def persist_graph(
         for n in nodes
     ]
 
+    # Retry once on transient connection failures (Aura Free Tier wake-up).
+    # The liveness_check_timeout on the driver handles most stale connections,
+    # but a full ServiceUnavailable (instance waking up) needs a retry.
+    max_attempts = 2
+    for attempt in range(max_attempts):
+        try:
+            _persist_graph_inner(driver, session_id, serialized_nodes, edges, user_id)
+            return
+        except (ServiceUnavailable, SessionExpired, OSError):
+            if attempt < max_attempts - 1:
+                time.sleep(2)
+            else:
+                raise
+
+
+def _persist_graph_inner(
+    driver: Driver,
+    session_id: str,
+    serialized_nodes: list[dict],
+    edges: list[dict],
+    user_id: str,
+) -> None:
     with driver.session() as session:
         # Persist nodes with created_by (AI-05) and created_at
         # NOTE: Entity label is constant (not user-supplied) so dynamic label is safe here.
@@ -74,6 +98,18 @@ def get_graph_by_session(driver: Driver, session_id: str) -> dict[str, list]:
     Used for the API response and for Phase 3 history retrieval.
     Fully parameterized — session_id passed as $session_id parameter.
     """
+    max_attempts = 2
+    for attempt in range(max_attempts):
+        try:
+            return _get_graph_by_session_inner(driver, session_id)
+        except (ServiceUnavailable, SessionExpired, OSError):
+            if attempt < max_attempts - 1:
+                time.sleep(2)
+            else:
+                raise
+
+
+def _get_graph_by_session_inner(driver: Driver, session_id: str) -> dict[str, list]:
     with driver.session() as session:
         # Fetch nodes
         node_result = session.run(
