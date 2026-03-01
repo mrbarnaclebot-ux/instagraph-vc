@@ -159,5 +159,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-01
-Stopped at: Completed 06-01-PLAN.md (copy sweep + hero attribution + brand standardization)
-Resume file: None
+Stopped at: Completed 06-02-PLAN.md (footer restructure with attribution and community links)
+Resume file: .planning/phases/06-rebrand-from-crypto-vc-to-general-vc-research-tool-with-attribution/06-02-SUMMARY.md
