@@ -130,11 +130,9 @@ function AppPageInner() {
 
       if (err instanceof GraphAPIError) {
         if (err.isRateLimited) {
-          // CONTEXT.md: modal appears prompting user to enter their own OpenAI API key
           setShowApiKeyModal(true)
           toast.error('Daily generation limit reached')
         } else if (err.isScrapeFailure) {
-          // FE-05: scrape failure specific toast
           toast.error("Couldn't read that URL — try pasting the text instead")
         } else {
           toast.error(err.message ?? 'Something went wrong')
@@ -176,7 +174,6 @@ function AppPageInner() {
     setSelectedNodeId(nodeId)
   }, [])
 
-  // Navigate to a connected node from the detail panel (CONTEXT.md: panel is a navigation hub)
   const handleNavigate = useCallback((nodeId: string) => {
     setSelectedNodeId(nodeId)
   }, [])
@@ -191,8 +188,8 @@ function AppPageInner() {
         onExpand={handleExpand}
       />
 
-      {/* Usage counter + history link — always visible below input */}
-      <div className="px-4 py-1.5 flex items-center gap-3">
+      {/* Toolbar — usage, cache indicator, history link */}
+      <div className="px-4 py-1.5 flex items-center gap-3 border-b border-gray-800/40">
         <UsageCounter getToken={getToken} refreshKey={usageRefreshKey} />
         {lastMeta?.cache_hit && (
           <CachedIndicator
@@ -274,6 +271,10 @@ function AppPageInner() {
                 <span className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
                   Rounds
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-violet-500/60" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }} />
+                  Narratives
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-pink-500/60" />

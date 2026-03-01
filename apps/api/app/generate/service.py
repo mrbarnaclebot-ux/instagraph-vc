@@ -1,3 +1,4 @@
+import logging
 import time
 import uuid
 from urllib.parse import urlparse
@@ -12,6 +13,8 @@ from app.scraper.ssrf import validate_input_length
 from app.graph.repository import persist_graph
 from app.ratelimit.cache import get_cached_scrape, cache_scrape
 
+logger = logging.getLogger(__name__)
+
 # OpenAI client — module-level singleton (one instance per worker process)
 _openai_client: OpenAI | None = None
 
@@ -23,13 +26,19 @@ def _get_openai_client() -> OpenAI:
     return _openai_client
 
 
+def _is_url(text: str) -> bool:
+    """Check if input looks like a URL (http or https)."""
+    stripped = text.strip()
+    return stripped.startswith("https://") or stripped.startswith("http://")
+
+
 def _auto_title(raw_input: str) -> str:
     """
     Generate a display title for a graph (CONTEXT.md: Graph naming locked decision).
     - URL inputs: "domain.com · Feb 27"
     - Text inputs: first 60 chars, truncated with ellipsis if longer
     """
-    if raw_input.strip().startswith("https://"):
+    if _is_url(raw_input):
         domain = urlparse(raw_input.strip()).netloc.removeprefix("www.")
         date_str = datetime.now().strftime("%b %-d")  # e.g. "Feb 27"
         return f"{domain} · {date_str}"
@@ -38,7 +47,7 @@ def _auto_title(raw_input: str) -> str:
         return (text[:60] + "...") if len(text) > 60 else text
 
 
-def run_generate_pipeline(
+async def run_generate_pipeline(
     raw_input: str,
     driver,
     user_id: str = "anonymous",    # AI-05: graph ownership
@@ -52,30 +61,21 @@ def run_generate_pipeline(
     Now accepts user_id for graph ownership and supabase for metadata persistence.
 
     1. Validate input length (>=200 chars) via validate_input_length()
-    2. Detect source type: URL (starts with https://) or raw text
+    2. Detect source type: URL (starts with http(s)://) or raw text
     3. If URL: scrape via scrape_url() (includes SSRF guard from Plan 02/03)
     4. Call GPT-4o via native structured outputs -> VCKnowledgeGraph
     5. Persist to Neo4j via persist_graph() with session_id + user_id (AI-05)
     6. AUTH-03: Save graph metadata to Supabase graphs table (authenticated only)
     7. Return API response matching CONTEXT.md contract
-
-    Returns dict matching GenerateResponse schema:
-    {
-        "graph": {"nodes": [...], "edges": [...]},
-        "meta": {"session_id": ..., "token_count": ..., "source_type": ..., "processing_ms": ...}
-    }
     """
     start_ms = int(time.time() * 1000)
 
-    # AI-03: Source type detection
-    # URL inputs: starts with "https://" (HTTP is blocked by SSRF validator anyway)
-    # Text inputs: everything else
     session_id = str(uuid.uuid4())
 
     cache_hit = False
     cache_age_seconds = None
 
-    if raw_input.strip().startswith("https://"):
+    if _is_url(raw_input):
         source_type = "url"
         # RATE-03: Check URL cache before scraping (Phase 4)
         if not force_refresh:
@@ -85,21 +85,14 @@ def run_generate_pipeline(
                 cache_hit = True
                 cache_age_seconds = cache_age
         if not cache_hit:
-            # For URL inputs, length check is skipped — the URL itself is short but the
-            # scraped content will be validated by scrape_url() (>500 char minimum yield).
-            content = scrape_url(raw_input.strip())
+            content = await scrape_url(raw_input.strip())
             cache_scrape(redis, raw_input.strip(), content)
     else:
         source_type = "text"
-        # AI-04: Reject text inputs shorter than 200 characters.
-        # validate_input_length raises HTTPException(400) with exact required message.
-        # Applied to text inputs only — URL inputs have their own content yield check.
         validate_input_length(raw_input)
         content = raw_input[:32_000]  # cap at 32k even for direct text (AI-02)
 
     # AI-01: GPT-4o structured extraction via native structured outputs
-    # client.beta.chat.completions.parse() guarantees VCKnowledgeGraph schema
-    # No manual JSON repair needed — native structured outputs handles it
     # BYOK: if user provides their own key, use a transient client (never stored/logged)
     if openai_api_key:
         client = OpenAI(api_key=openai_api_key)
@@ -107,7 +100,7 @@ def run_generate_pipeline(
         client = _get_openai_client()
     try:
         response = client.beta.chat.completions.parse(
-            model="gpt-4o",
+            model=settings.openai_model,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": content},
@@ -141,7 +134,6 @@ def run_generate_pipeline(
     token_count: int = response.usage.total_tokens
 
     # Serialize to dicts for Neo4j persistence and response
-    # exclude_none strips unpopulated NodeProperties fields (keeps Neo4j/frontend clean)
     nodes = [node.model_dump(exclude_none=True) for node in parsed.nodes]
     edges = [edge.model_dump() for edge in parsed.edges]
 
@@ -163,13 +155,13 @@ def run_generate_pipeline(
             supabase.table("graphs").insert({
                 "user_id": user_id,
                 "title": title,
-                "source_url": raw_input.strip() if raw_input.strip().startswith("https://") else None,
+                "source_url": raw_input.strip() if _is_url(raw_input) else None,
                 "node_count": len(nodes),
                 "edge_count": len(edges),
                 "neo4j_session_id": session_id,
             }).execute()
         except Exception:
-            pass  # Fire-and-forget — graph save failure must not fail the request
+            logger.warning("Failed to save graph metadata to Supabase", exc_info=True)
 
     processing_ms = int(time.time() * 1000) - start_ms
 

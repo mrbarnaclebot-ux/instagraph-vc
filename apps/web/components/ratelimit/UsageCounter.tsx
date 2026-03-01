@@ -58,7 +58,7 @@ export default function UsageCounter({ getToken, refreshKey = 0 }: UsageCounterP
     )
   }
 
-  if (!usage) return null
+  if (!usage || usage.limit === 0) return null
 
   return (
     <div className="text-xs text-gray-500" title="Resets at midnight UTC">

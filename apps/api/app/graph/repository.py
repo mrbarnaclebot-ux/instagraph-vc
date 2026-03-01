@@ -19,9 +19,6 @@ def persist_graph(
     Scope: All nodes/edges get session_id property for query isolation (CONTEXT.md).
     Ownership: created_by = user_id (Clerk user_id or "anonymous" for trial graphs).
     Pattern: Uses UNWIND for batch writes — single query per node/edge batch.
-
-    Each node dict: {id, label, type, properties}
-    Each edge dict: {source, target, relationship}
     """
     # Neo4j cannot store nested maps as properties — serialize to JSON string
     serialized_nodes = [
@@ -30,8 +27,6 @@ def persist_graph(
     ]
 
     # Retry once on transient connection failures (Aura Free Tier wake-up).
-    # The liveness_check_timeout on the driver handles most stale connections,
-    # but a full ServiceUnavailable (instance waking up) needs a retry.
     max_attempts = 2
     for attempt in range(max_attempts):
         try:
@@ -52,10 +47,6 @@ def _persist_graph_inner(
     user_id: str,
 ) -> None:
     with driver.session() as session:
-        # Persist nodes with created_by (AI-05) and created_at
-        # NOTE: Entity label is constant (not user-supplied) so dynamic label is safe here.
-        # The type property (Investor/Project/Round/Narrative/Person) is stored as a
-        # property, not a label — avoids dynamic label injection entirely.
         session.run(
             """
             UNWIND $nodes AS node
@@ -71,12 +62,9 @@ def _persist_graph_inner(
             """,
             nodes=serialized_nodes,
             session_id=session_id,
-            user_id=user_id,  # parameterized — never interpolated
+            user_id=user_id,
         )
 
-        # Persist relationships — parameterized UNWIND batch insert
-        # Relationship type is stored as a property, not a dynamic Cypher label,
-        # to maintain strict parameterization (no apoc.create.relationship needed).
         session.run(
             """
             UNWIND $edges AS edge
@@ -92,16 +80,16 @@ def _persist_graph_inner(
         )
 
 
-def get_graph_by_session(driver: Driver, session_id: str) -> dict[str, list]:
+def get_graph_by_session(driver: Driver, session_id: str, user_id: str | None = None) -> dict[str, list] | None:
     """
     Retrieves all nodes and relationships for a session_id.
-    Used for the API response and for Phase 3 history retrieval.
-    Fully parameterized — session_id passed as $session_id parameter.
+    When user_id is provided, verifies ownership — returns None if the graph
+    belongs to a different user.
     """
     max_attempts = 2
     for attempt in range(max_attempts):
         try:
-            return _get_graph_by_session_inner(driver, session_id)
+            return _get_graph_by_session_inner(driver, session_id, user_id)
         except (ServiceUnavailable, SessionExpired, OSError):
             if attempt < max_attempts - 1:
                 time.sleep(2)
@@ -109,20 +97,35 @@ def get_graph_by_session(driver: Driver, session_id: str) -> dict[str, list]:
                 raise
 
 
-def _get_graph_by_session_inner(driver: Driver, session_id: str) -> dict[str, list]:
+def _get_graph_by_session_inner(driver: Driver, session_id: str, user_id: str | None = None) -> dict[str, list] | None:
     with driver.session() as session:
         # Fetch nodes
         node_result = session.run(
             """
             MATCH (n:Entity {session_id: $session_id})
             RETURN n.id AS id, n.label AS label, n.type AS type,
-                   n.properties AS properties, n.session_id AS session_id
+                   n.properties AS properties, n.session_id AS session_id,
+                   n.created_by AS created_by
             """,
             session_id=session_id,
         )
         raw_nodes = [dict(record) for record in node_result]
+
+        # No nodes found for this session
+        if not raw_nodes:
+            return None
+
+        # Ownership check: if user_id provided, verify created_by matches
+        if user_id and raw_nodes[0].get("created_by") not in (user_id, "anonymous"):
+            return None
+
         nodes = [
-            {**n, "properties": json.loads(n["properties"]) if isinstance(n.get("properties"), str) else (n.get("properties") or {})}
+            {
+                "id": n["id"],
+                "label": n["label"],
+                "type": n["type"],
+                "properties": json.loads(n["properties"]) if isinstance(n.get("properties"), str) else (n.get("properties") or {}),
+            }
             for n in raw_nodes
         ]
 

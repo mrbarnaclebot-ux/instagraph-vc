@@ -3,7 +3,7 @@
 import CytoscapeComponent from 'react-cytoscapejs'
 import Cytoscape from 'cytoscape'
 import fcose from 'cytoscape-fcose'
-import { useRef, useCallback, useEffect, useMemo } from 'react'
+import { useRef, useCallback, useEffect, useMemo, useState } from 'react'
 import { getCytoscapeStylesheet } from './cytoscapeStyles'
 import type { VCGraph } from '@graphvc/shared-types'
 
@@ -20,8 +20,15 @@ interface GraphCanvasProps {
 export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyInit }: GraphCanvasProps) {
   const cyRef = useRef<Cytoscape.Core | null>(null)
 
-  const isMobile = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 768, [])
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768)
   const stylesheet = useMemo(() => getCytoscapeStylesheet(isMobile), [isMobile])
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)')
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
+  }, [])
 
   // When selectedNodeId changes externally (e.g., from detail panel navigation), sync highlight
   useEffect(() => {
@@ -106,6 +113,7 @@ export default function GraphCanvas({ graph, selectedNodeId, onNodeClick, onCyIn
           { label: 'Investor', color: 'bg-indigo-500' },
           { label: 'Project', color: 'bg-emerald-500' },
           { label: 'Round', color: 'bg-amber-500' },
+          { label: 'Narrative', color: 'bg-violet-500' },
           { label: 'Person', color: 'bg-pink-500' },
         ].map((t) => (
           <span key={t.label} className="flex items-center gap-1 text-[9px] text-gray-500">

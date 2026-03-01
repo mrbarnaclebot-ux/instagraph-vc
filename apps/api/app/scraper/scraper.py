@@ -1,4 +1,4 @@
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from fastapi import HTTPException
 
@@ -16,25 +16,15 @@ MAX_CONTENT_CHARS = 32_000  # AI-02: cap before sending to GPT-4o
 MIN_CONTENT_CHARS = 500     # CONTEXT.md: <500 chars → scrape_failed
 
 
-def scrape_url(url: str) -> str:
+async def scrape_url(url: str) -> str:
     """
     Fetches a public HTTPS URL, strips boilerplate HTML, and returns
     extracted text (up to 32,000 chars) for GPT-4o processing (AI-02).
 
     SSRF protection (SEC-01):
     - validate_url() is called first — raises 400 if URL is private/blocked
-    - allow_redirects=False prevents redirect chains to private IPs
+    - follow_redirects=False prevents redirect chains to private IPs
     - Redirect Location headers are validated through validate_url() before following
-
-    Source type handling (AI-03):
-    - This function is ONLY called when input is a URL (source_type="url")
-    - Raw text input bypasses this function entirely (handled in generate/service.py)
-
-    Redis caching (AI-02 partial):
-    - URL caching ("cache raw scraped text for 1 hour") is NOT implemented here.
-    - That sub-requirement is delivered in Phase 4 with RATE-03 (Upstash Redis).
-    - The caller (generate/service.py) will be updated in Phase 4 to check cache
-      before calling scrape_url().
 
     Raises:
         HTTPException(400): URL is private/blocked (from validate_url)
@@ -46,55 +36,55 @@ def scrape_url(url: str) -> str:
     validate_url(url)
 
     try:
-        response = requests.get(
-            url,
-            headers={"User-Agent": CHROME_UA},
-            timeout=10,          # 10s timeout — fail fast per CONTEXT.md
-            allow_redirects=False,  # CRITICAL: validate redirects manually (SEC-01)
-        )
-
-        # Handle redirects manually to validate each redirect target
-        redirect_count = 0
-        while response.is_redirect and redirect_count < 5:
-            redirect_url = response.headers.get("Location", "")
-            if not redirect_url.startswith("http"):
-                # Relative redirect — reconstruct absolute URL
-                from urllib.parse import urljoin
-                redirect_url = urljoin(url, redirect_url)
-            # Validate the redirect target through SSRF guard
-            validate_url(redirect_url)
-            response = requests.get(
-                redirect_url,
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(
+                url,
                 headers={"User-Agent": CHROME_UA},
-                timeout=10,
-                allow_redirects=False,
+                follow_redirects=False,  # CRITICAL: validate redirects manually (SEC-01)
             )
-            redirect_count += 1
 
+            # Handle redirects manually to validate each redirect target
+            redirect_count = 0
+            while response.is_redirect and redirect_count < 5:
+                redirect_url = response.headers.get("location", "")
+                if not redirect_url.startswith("http"):
+                    # Relative redirect — reconstruct absolute URL
+                    from urllib.parse import urljoin
+                    redirect_url = urljoin(str(response.url), redirect_url)
+                # Validate the redirect target through SSRF guard
+                validate_url(redirect_url)
+                response = await client.get(
+                    redirect_url,
+                    headers={"User-Agent": CHROME_UA},
+                    follow_redirects=False,
+                )
+                redirect_count += 1
+
+            # Check for HTTP errors on final response (covers both initial and post-redirect)
             response.raise_for_status()
 
-        # Reject non-HTML responses before parsing — PDFs, images, binaries would
-        # produce garbage or crash BeautifulSoup (lxml parser is HTML-only here).
-        content_type = response.headers.get("Content-Type", "")
-        if "text/html" not in content_type and "text/plain" not in content_type:
-            raise HTTPException(status_code=400, detail={
-                "error": "scrape_failed",
-                "message": "Couldn't read that URL — try pasting the text instead",
-            })
+            # Reject non-HTML responses before parsing — PDFs, images, binaries would
+            # produce garbage or crash BeautifulSoup (lxml parser is HTML-only here).
+            content_type = response.headers.get("content-type", "")
+            if "text/html" not in content_type and "text/plain" not in content_type:
+                raise HTTPException(status_code=400, detail={
+                    "error": "scrape_failed",
+                    "message": "Couldn't read that URL — try pasting the text instead",
+                })
 
     except HTTPException:
         raise
-    except requests.Timeout:
+    except httpx.TimeoutException:
         raise HTTPException(status_code=503, detail={
             "error": "service_unavailable",
             "message": "URL fetch timed out — try again or paste the text directly",
         })
-    except requests.ConnectionError:
+    except httpx.ConnectError:
         raise HTTPException(status_code=503, detail={
             "error": "service_unavailable",
             "message": "Could not connect to URL — try pasting the text instead",
         })
-    except requests.HTTPError as e:
+    except httpx.HTTPStatusError:
         raise HTTPException(status_code=400, detail={
             "error": "scrape_failed",
             "message": "Couldn't read that URL — try pasting the text instead",
@@ -116,7 +106,7 @@ def _extract_text(html: str) -> str:
     """
     Extracts readable text from HTML using BeautifulSoup with lxml parser.
     Strips: script, style, nav, footer, header tags.
-    Extracts: h1/h2/h3 headings, <article> body, <p> paragraphs.
+    Prefers <article> body; falls back to <p> paragraphs if no article found.
     Uses lxml for performance on large news articles (vs html.parser).
     """
     soup = BeautifulSoup(html, "lxml")
@@ -131,15 +121,21 @@ def _extract_text(html: str) -> str:
         text = heading.get_text(strip=True)
         if text:
             parts.append(text)
-    # Article body (many news sites wrap content in <article>)
-    for article in soup.find_all("article"):
-        text = article.get_text(separator=" ", strip=True)
-        if text:
-            parts.append(text)
-    # Paragraph fallback (catches sites without <article>)
-    for p in soup.find_all("p"):
-        text = p.get_text(strip=True)
-        if text:
-            parts.append(text)
+
+    # Prefer <article> body (many news sites wrap content in <article>).
+    # Only fall back to <p> tags when no <article> is found, to avoid
+    # duplicate content (articles contain <p> tags).
+    articles = soup.find_all("article")
+    if articles:
+        for article in articles:
+            text = article.get_text(separator=" ", strip=True)
+            if text:
+                parts.append(text)
+    else:
+        # Paragraph fallback (catches sites without <article>)
+        for p in soup.find_all("p"):
+            text = p.get_text(strip=True)
+            if text:
+                parts.append(text)
 
     return " ".join(parts)

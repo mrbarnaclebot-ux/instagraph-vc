@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 from fastapi.testclient import TestClient
 
 
@@ -102,15 +102,23 @@ class TestGenerateEndpoint:
         assert "token_count" in data["meta"]
         assert "processing_ms" in data["meta"]
 
-    def test_generate_rejects_missing_auth(self, app_with_mocks):
-        # Ensure dev bypass is off so missing token is rejected (bypass is dev-only)
-        with patch("app.auth.clerk.settings") as mock_settings:
-            mock_settings.dev_skip_auth = False
-            with TestClient(app_with_mocks) as client:
-                response = client.post(
-                    "/api/generate",
-                    json={"input": "Some funding announcement text. " * 10},
-                )
+    def test_session_endpoint_rejects_missing_auth(self, app_with_mocks):
+        """GET /api/generate/session/{id} requires auth (uses get_current_user, not get_optional_user).
+        With dev_skip_auth off, missing token should return 401."""
+        from app.dependencies import get_optional_user
+        from fastapi import HTTPException
+
+        # Override get_optional_user to simulate real auth (not dev bypass)
+        # get_current_user is used on the session endpoint — override it too
+        from app.dependencies import get_current_user
+
+        async def reject_no_auth():
+            raise HTTPException(status_code=401, detail={"error": "unauthorized", "message": "Missing authorization token"})
+
+        app_with_mocks.dependency_overrides[get_current_user] = reject_no_auth
+
+        with TestClient(app_with_mocks) as client:
+            response = client.get("/api/generate/session/fake-session-id")
         assert response.status_code == 401
         assert response.json()["detail"]["error"] == "unauthorized"
 
@@ -134,31 +142,37 @@ class TestGenerateEndpoint:
 
     @patch("app.generate.service._get_openai_client")
     @patch("app.scraper.scraper.validate_url")
-    @patch("app.scraper.scraper.requests.get")
     def test_generate_url_input_scrapes_and_extracts(
-        self, mock_requests_get, mock_validate, mock_openai_factory, app_with_mocks, valid_jwt_user
+        self, mock_validate, mock_openai_factory, app_with_mocks, valid_jwt_user
     ):
+        import httpx
         from app.dependencies import get_current_user
         app_with_mocks.dependency_overrides[get_current_user] = lambda: valid_jwt_user
 
-        # Mock the scraper
-        mock_response = MagicMock()
+        # Mock the scraper (httpx)
+        mock_response = MagicMock(spec=httpx.Response)
         mock_response.is_redirect = False
-        mock_response.headers = {"Content-Type": "text/html; charset=utf-8"}
+        mock_response.headers = {"content-type": "text/html; charset=utf-8"}
         mock_response.text = "<html><body>" + "<p>Paradigm Capital invested $50M in Uniswap. </p>" * 30 + "</body></html>"
         mock_response.raise_for_status.return_value = None
-        mock_requests_get.return_value = mock_response
 
         # Mock OpenAI
         mock_client = MagicMock()
         mock_client.beta.chat.completions.parse.return_value = make_mock_openai_response(SAMPLE_GRAPH_RESPONSE)
         mock_openai_factory.return_value = mock_client
 
-        with TestClient(app_with_mocks) as client:
-            response = client.post(
-                "/api/generate",
-                json={"input": "https://techcrunch.com/article"},
-            )
+        with patch("app.scraper.scraper.httpx.AsyncClient") as mock_client_cls:
+            mock_async_client = AsyncMock()
+            mock_async_client.get.return_value = mock_response
+            mock_async_client.__aenter__ = AsyncMock(return_value=mock_async_client)
+            mock_async_client.__aexit__ = AsyncMock(return_value=False)
+            mock_client_cls.return_value = mock_async_client
+
+            with TestClient(app_with_mocks) as client:
+                response = client.post(
+                    "/api/generate",
+                    json={"input": "https://techcrunch.com/article"},
+                )
 
         assert response.status_code == 200
         data = response.json()

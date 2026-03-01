@@ -1,12 +1,15 @@
+import logging
 import time
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from neo4j import Driver
 
 from app.dependencies import get_current_user, get_optional_user, get_neo4j_driver, get_supabase_client, get_redis_client
 from app.ratelimit.limiter import check_rate_limit
 from app.generate.schemas import GenerateRequest, GenerateResponse
-from app.generate.service import run_generate_pipeline
+from app.generate.service import run_generate_pipeline, _is_url
 from app.graph.repository import get_graph_by_session
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["generate"])
 
@@ -25,25 +28,6 @@ async def generate(
     AUTH-04: Logs every request to Supabase request_log (fire-and-forget).
     AI-05: Passes user_id for graph ownership in Neo4j.
     AUTH-03: run_generate_pipeline saves graph metadata to Supabase graphs table.
-
-    Authentication: Optional — anonymous users can generate trial graphs.
-    Authenticated users get their Clerk user_id for graph ownership.
-
-    Request body: {"input": "text or https://url"}
-
-    Returns:
-    {
-        "graph": {
-            "nodes": [{"id": "...", "label": "...", "type": "...", "properties": {...}}],
-            "edges": [{"source": "...", "target": "...", "relationship": "..."}]
-        },
-        "meta": {
-            "session_id": "uuid",
-            "token_count": 1234,
-            "source_type": "url" | "text",
-            "processing_ms": 4500
-        }
-    }
     """
     start = time.time()
     user_id = current_user.get("sub", "anonymous") if current_user else "anonymous"
@@ -55,7 +39,7 @@ async def generate(
         ip = request.client.host if request.client else "127.0.0.1"
         check_rate_limit(redis, user_id, ip)
 
-    result = run_generate_pipeline(
+    result = await run_generate_pipeline(
         raw_input=body.input,
         driver=driver,
         user_id=user_id,
@@ -73,14 +57,14 @@ async def generate(
             supabase.table("request_log").insert({
                 "user_id": user_id,
                 "endpoint": "/api/generate",
-                "source_url": body.input.strip() if body.input.strip().startswith("https://") else None,
+                "source_url": body.input.strip() if _is_url(body.input) else None,
                 "ip": request.client.host if request.client else None,
                 "status_code": 200,
                 "tokens_used": result["meta"]["token_count"],
                 "processing_ms": processing_ms,
             }).execute()
         except Exception:
-            pass  # Fire-and-forget
+            logger.warning("Failed to log request to Supabase", exc_info=True)
 
     return result
 
@@ -92,5 +76,11 @@ async def get_session(
     driver: Driver = Depends(get_neo4j_driver),
 ) -> dict:
     """Retrieve a previously generated graph by session_id (FE-03: history reload)."""
-    graph = get_graph_by_session(driver, session_id)
+    user_id = current_user.get("sub", "")
+    graph = get_graph_by_session(driver, session_id, user_id=user_id)
+    if graph is None:
+        raise HTTPException(status_code=404, detail={
+            "error": "not_found",
+            "message": "Graph not found",
+        })
     return {"graph": graph, "meta": {"session_id": session_id, "token_count": 0, "source_type": "text", "processing_ms": 0}}
