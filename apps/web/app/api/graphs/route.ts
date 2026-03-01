@@ -10,10 +10,12 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // In dev, also include legacy "dev-user" graphs from FastAPI dev auth bypass
+  const userIds = process.env.NODE_ENV === 'development' ? [userId, 'dev-user'] : [userId]
   const { data, error } = await supabase
     .from('graphs')
     .select('id, title, source_url, node_count, edge_count, neo4j_session_id, created_at')
-    .eq('user_id', userId)
+    .in('user_id', userIds)
     .order('created_at', { ascending: false })
 
   if (error) {

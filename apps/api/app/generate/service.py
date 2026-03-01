@@ -152,6 +152,12 @@ async def run_generate_pipeline(
     if supabase is not None and user_id != "anonymous":
         title = _auto_title(raw_input)
         try:
+            # Ensure user exists in Supabase (Clerk webhook may not have fired in dev)
+            supabase.table("users").upsert(
+                {"id": user_id, "email": f"{user_id}@placeholder.local", "plan": "free"},
+                on_conflict="id",
+                ignore_duplicates=True,
+            ).execute()
             supabase.table("graphs").insert({
                 "user_id": user_id,
                 "title": title,

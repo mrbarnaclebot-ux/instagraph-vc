@@ -116,7 +116,8 @@ def _get_graph_by_session_inner(driver: Driver, session_id: str, user_id: str | 
             return None
 
         # Ownership check: if user_id provided, verify created_by matches
-        if user_id and raw_nodes[0].get("created_by") not in (user_id, "anonymous"):
+        # "dev-user" is the legacy dev bypass user_id — allow access for any authenticated user
+        if user_id and raw_nodes[0].get("created_by") not in (user_id, "anonymous", "dev-user"):
             return None
 
         nodes = [

@@ -49,6 +49,19 @@ async def get_current_user(
     """
     # Dev bypass — never set DEV_SKIP_AUTH=true in production
     if settings.dev_skip_auth:
+        # If a JWT is present, decode it WITHOUT verification to extract the real
+        # Clerk user_id (sub). This ensures Supabase stores the correct user_id so
+        # the Next.js /api/graphs route (which uses Clerk's real auth) can find them.
+        if credentials is not None:
+            try:
+                payload = jwt.decode(
+                    credentials.credentials,
+                    options={"verify_signature": False, "verify_exp": False},
+                    algorithms=["RS256"],
+                )
+                return payload
+            except Exception:
+                pass  # Fall through to dev-user default
         return {"sub": "dev-user", "azp": settings.clerk_authorized_party or "http://localhost:3000"}
 
     if credentials is None:
